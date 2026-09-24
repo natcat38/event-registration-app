@@ -152,18 +152,16 @@ describe('POST /api/admin/events', () => {
     expect(res.body.errors).toHaveProperty('postalCode');
   });
 
-  it('returns 421 for a full-timestamp deadline', async () => {
+  it('keeps only the Singapore date of a full-timestamp deadline', async () => {
+    const name = eventName('full-timestamp-deadline');
+    createdNames.push(name);
     const res = await request(app)
       .post('/api/admin/events')
-      .send(
-        validBody({
-          name: eventName('full-timestamp-deadline'),
-          deadline: '2099-01-01T10:00:00+08:00',
-        }),
-      );
+      .send(validBody({ name, deadline: '2099-01-01T10:00:00+08:00' }));
 
-    expect(res.status).toBe(421);
-    expect(res.body.errors).toHaveProperty('deadline');
+    expect(res.status).toBe(200);
+    const stored = await Event.findOne({ where: { name } });
+    expect(stored?.deadline.toISOString()).toBe('2099-01-01T15:59:59.999Z');
   });
 
   it('stores the mocked address and returns an empty 200 body on success', async () => {
