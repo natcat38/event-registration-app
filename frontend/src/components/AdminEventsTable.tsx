@@ -22,7 +22,7 @@ interface Props {
   onViewTrend: (event: { uuid: string; name: string }) => void;
 }
 
-// TableContainer scrolls horizontally at phone width instead of squashing columns.
+// TableContainer scrolls horizontally at phone width; minWidth stops Name and Address splitting short words.
 export default function AdminEventsTable({
   events,
   page,
@@ -51,10 +51,12 @@ export default function AdminEventsTable({
           <TableBody>
             {events.map((event) => (
               <TableRow key={event.uuid}>
-                <TableCell sx={{ overflowWrap: 'anywhere' }}>{event.name}</TableCell>
+                <TableCell sx={{ overflowWrap: 'anywhere', minWidth: 120 }}>{event.name}</TableCell>
                 <TableCell>{formatDateTime(event.createdAt)}</TableCell>
                 <TableCell>{formatDateTime(event.dateTime)}</TableCell>
-                <TableCell sx={{ overflowWrap: 'anywhere' }}>{event.address}</TableCell>
+                <TableCell sx={{ overflowWrap: 'anywhere', minWidth: 120 }}>
+                  {event.address}
+                </TableCell>
                 <TableCell>{event.deadline}</TableCell>
                 <TableCell>{event.handler.name}</TableCell>
                 <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
