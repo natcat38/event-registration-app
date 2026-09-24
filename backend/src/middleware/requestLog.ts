@@ -7,7 +7,8 @@ export function requestLog(req: Request, res: Response, next: NextFunction) {
   res.on('finish', () => {
     logger.info('request', {
       method: req.method,
-      path: req.path,
+      // originalUrl, not req.path: a mounted router strips its prefix from req.path before finish fires.
+      path: req.originalUrl.split('?')[0],
       status: res.statusCode,
       ms: Date.now() - started,
     });
