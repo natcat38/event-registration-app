@@ -1,0 +1,53 @@
+{
+  "name": "event-registration-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Event registration API",
+  "main": "dist/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "test": "jest --selectProjects unit --coverage",
+    "test:integration": "jest --selectProjects integration --runInBand",
+    "db:migrate": "sequelize-cli db:migrate",
+    "db:migrate:undo": "sequelize-cli db:migrate:undo",
+    "db:seed": "sequelize-cli db:seed:all"
+  },
+  "dependencies": {
+    "axios": "^1.20.0",
+    "cors": "2.8.6",
+    "dotenv": "18.0.1",
+    "express": "5.2.1",
+    "express-rate-limit": "^8.7.0",
+    "helmet": "8.3.0",
+    "mysql2": "3.24.4",
+    "sequelize": "6.37.8",
+    "winston": "3.19.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@types/cors": "2.8.19",
+    "@types/express": "5.0.6",
+    "@types/jest": "30.0.0",
+    "@types/node": "26.6.2",
+    "@types/supertest": "7.2.1",
+    "eslint": "10.11.0",
+    "eslint-config-prettier": "10.1.8",
+    "globals": "17.12.0",
+    "jest": "30.5.2",
+    "prettier": "3.9.8",
+    "sequelize-cli": "6.6.5",
+    "supertest": "7.2.2",
+    "ts-jest": "29.4.12",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.70.0"
+  }
+}
