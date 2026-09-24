@@ -75,16 +75,16 @@ function TrendDialogContent({ eventUuid, eventName, onClose }: Props & { eventUu
             <TableHead>
               <TableRow>
                 <TableCell>Date</TableCell>
-                <TableCell align="right">Registration Count</TableCell>
-                <TableCell align="right">New Registration Count</TableCell>
+                <TableCell align="right">New Registration</TableCell>
+                <TableCell align="right">Total Registration</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {trend.map((point) => (
                 <TableRow key={point.date}>
                   <TableCell>{point.date}</TableCell>
-                  <TableCell align="right">{point.registrationCount}</TableCell>
                   <TableCell align="right">{point.newRegistrationCount}</TableCell>
+                  <TableCell align="right">{point.registrationCount}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

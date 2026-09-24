@@ -74,18 +74,19 @@ export default function AddEventForm({
             onDeadlineChange={(value) => setField('deadline', value)}
             deadlineError={fieldError('deadline')}
             disabled={submitting}
-          />
-          <TextField
-            id="field-postalCode"
-            label="Postal Code"
-            value={form.postalCode}
-            onChange={(e) => setField('postalCode', e.target.value)}
-            error={Boolean(fieldError('postalCode'))}
-            helperText={fieldError('postalCode') ?? '6 digits'}
-            disabled={submitting}
-            fullWidth
-            required
-          />
+          >
+            <TextField
+              id="field-postalCode"
+              label="Postal Code"
+              value={form.postalCode}
+              onChange={(e) => setField('postalCode', e.target.value)}
+              error={Boolean(fieldError('postalCode'))}
+              helperText={fieldError('postalCode') ?? '6 digits'}
+              disabled={submitting}
+              fullWidth
+              required
+            />
+          </EventDateFields>
           <TextField
             id="field-capacity"
             label="Capacity"

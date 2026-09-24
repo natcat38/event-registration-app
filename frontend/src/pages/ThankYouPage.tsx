@@ -31,6 +31,9 @@ export default function ThankYouPage() {
   return (
     <Paper sx={{ p: 4, maxWidth: 480, mx: 'auto' }}>
       <Stack spacing={2} alignItems="center" textAlign="center">
+        <Typography aria-hidden variant="h3" color="success.main" lineHeight={1}>
+          &#10003;
+        </Typography>
         <Typography variant="h4" component="h1">
           Thank You!
         </Typography>

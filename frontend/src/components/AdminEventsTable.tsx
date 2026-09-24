@@ -34,22 +34,18 @@ export default function AdminEventsTable({
     <>
       <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
         <Table size="small">
-          <TableHead>
+          <TableHead sx={{ '& th': { whiteSpace: 'nowrap' } }}>
             <TableRow>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Name</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Created On</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Event Date Time</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Address</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Registration Deadline</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Handler</TableCell>
-              <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-                Capacity
-              </TableCell>
-              <TableCell align="right" sx={{ whiteSpace: 'nowrap' }}>
-                No. of Registration
-              </TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Status</TableCell>
-              <TableCell sx={{ whiteSpace: 'nowrap' }}>Action</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Created On</TableCell>
+              <TableCell>Event Date Time</TableCell>
+              <TableCell>Address</TableCell>
+              <TableCell>Registration Deadline</TableCell>
+              <TableCell>Handler</TableCell>
+              <TableCell align="right">Capacity</TableCell>
+              <TableCell align="right">No. of Registration</TableCell>
+              <TableCell>Status</TableCell>
+              <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

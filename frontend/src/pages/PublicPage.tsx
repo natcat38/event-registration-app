@@ -94,6 +94,7 @@ export default function PublicPage() {
           {selectedEvent && (
             <>
               <TextField
+                id="field-email"
                 label="Email address"
                 type="email"
                 autoComplete="email"

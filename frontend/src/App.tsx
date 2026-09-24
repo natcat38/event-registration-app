@@ -3,6 +3,16 @@ import { Link, Route, Routes } from 'react-router-dom';
 import AdminPage from './pages/AdminPage';
 import PublicPage from './pages/PublicPage';
 import ThankYouPage from './pages/ThankYouPage';
+import { useDocumentTitle } from './utils/useDocumentTitle';
+
+function NotFound() {
+  useDocumentTitle('Not found');
+  return (
+    <Typography variant="h5" component="h1">
+      Page not found. <Link to="/">Go home</Link>
+    </Typography>
+  );
+}
 
 export default function App() {
   return (
@@ -42,14 +52,7 @@ export default function App() {
           <Route path="/" element={<PublicPage />} />
           <Route path="/thank-you" element={<ThankYouPage />} />
           <Route path="/admin" element={<AdminPage />} />
-          <Route
-            path="*"
-            element={
-              <Typography>
-                Page not found. <Link to="/">Go home</Link>
-              </Typography>
-            }
-          />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Container>
     </Box>

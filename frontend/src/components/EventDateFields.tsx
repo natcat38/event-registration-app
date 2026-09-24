@@ -1,6 +1,8 @@
 import { TextField } from '@mui/material';
+import type { ReactNode } from 'react';
 
 interface Props {
+  children?: ReactNode;
   dateTime: string;
   onDateTimeChange: (value: string) => void;
   dateTimeError?: string;
@@ -10,8 +12,9 @@ interface Props {
   disabled: boolean;
 }
 
-// The two date fields of the Add Event form, split out to keep AddEventForm.tsx short.
+// The two date fields of the Add Event form, split out to keep AddEventForm.tsx short. `children` sits between them.
 export default function EventDateFields({
+  children,
   dateTime,
   onDateTimeChange,
   dateTimeError,
@@ -35,7 +38,7 @@ export default function EventDateFields({
         fullWidth
         required
       />
-
+      {children}
       <TextField
         id="field-deadline"
         label="Registration Deadline"
