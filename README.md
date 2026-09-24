@@ -1,5 +1,7 @@
 # Event Registration
 
+[![CI](https://github.com/natcat38/event-registration-app/actions/workflows/ci.yml/badge.svg)](https://github.com/natcat38/event-registration-app/actions/workflows/ci.yml)
+
 An events company runs public events with limited seats. Staff create events and assign an employee to run each one; the public registers with an email address. This service keeps two people from taking the last seat at the same moment and shows staff how fast each event is filling.
 
 Backend: Express 5, Sequelize 6, MySQL 8.4, TypeScript. Frontend: React 19, Vite, MUI. API on port 8000, UI on port 8001.
