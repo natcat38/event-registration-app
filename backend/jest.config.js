@@ -15,14 +15,13 @@ module.exports = {
       testMatch: ['<rootDir>/src/**/*.integration.test.ts'],
     },
   ],
-  // Coverage counts logic modules in the unit suite. app/server/models/requestLog are wiring proven by the integration suite.
+  // Coverage counts logic modules in the unit suite. app/server/models are wiring proven by the integration suite.
   collectCoverageFrom: [
     'src/**/*.ts',
     '!src/**/*.test.ts',
     '!src/app.ts',
     '!src/server.ts',
     '!src/models/**',
-    '!src/middleware/requestLog.ts',
   ],
   coverageThreshold: { global: { branches: 50, functions: 50, lines: 50, statements: 50 } },
 };
