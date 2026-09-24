@@ -18,7 +18,7 @@ Backend: Express 5, Sequelize 6, MySQL 8.4, TypeScript. Frontend: React 19, Vite
 2. Open `.env` and fill in `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` with your OneMap account.
 3. Start the database: `docker compose up -d --wait`
 
-MySQL's first boot can take up to a minute. If the next step reports a lost connection, wait a few seconds and rerun it.
+MySQL's first boot can take up to three minutes; `docker compose up -d --wait` returns once the database is healthy. If a later step reports a lost connection, wait a few seconds and rerun it.
 
 ## Seeding
 
