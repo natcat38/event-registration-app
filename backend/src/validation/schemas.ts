@@ -29,7 +29,11 @@ export const createEventSchema = z
     if (!dateTime)
       ctx.addIssue({ code: 'custom', path: ['dateTime'], message: 'Invalid date/time' });
     if (!deadline)
-      ctx.addIssue({ code: 'custom', path: ['deadline'], message: 'Must be a date (YYYY-MM-DD) or an ISO date-time' });
+      ctx.addIssue({
+        code: 'custom',
+        path: ['deadline'],
+        message: 'Must be a date (YYYY-MM-DD) or an ISO date-time',
+      });
     if (!dateTime || !deadline) return z.NEVER;
     const max = new Date();
     max.setUTCFullYear(max.getUTCFullYear() + MAX_YEARS_AHEAD);
