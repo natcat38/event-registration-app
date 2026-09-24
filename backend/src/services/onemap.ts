@@ -25,7 +25,7 @@ async function search(postalCode: string, token: string): Promise<AxiosResponse>
   }
 }
 
-/** OneMap postal lookup; null unless a result's `POSTAL` matches exactly (its search is prefix-based). see docs/adr/0005 */
+/** OneMap postal lookup; null unless a result's `POSTAL` matches exactly (search is prefix-based). see docs/adr/0005 */
 export async function lookupAddress(postalCode: string): Promise<string | null> {
   const token = await getToken();
   let res = await withOneRetry(() => search(postalCode, token));

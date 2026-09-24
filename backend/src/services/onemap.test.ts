@@ -170,25 +170,35 @@ describe('lookupAddress', () => {
 
 describe('lookupAddress retries once on a transient failure', () => {
   const TIMEOUT = Object.assign(new Error('timeout of 3000ms exceeded'), { code: 'ECONNABORTED' });
+  beforeEach(() => jest.useFakeTimers());
+  afterEach(() => jest.useRealTimers());
+  // Skips the retry pause instead of sleeping through it.
+  const lookupPastRetry = async () => {
+    const [address] = await Promise.all([
+      lookupAddress('018956'),
+      jest.advanceTimersByTimeAsync(300),
+    ]);
+    return address;
+  };
 
   it('returns the address when the first search times out and the second succeeds', async () => {
     mockedAxios.post.mockResolvedValueOnce(TOKEN_RESPONSE(300));
     mockedAxios.get.mockRejectedValueOnce(TIMEOUT).mockResolvedValueOnce(FOUND_RESPONSE);
-    await expect(lookupAddress('018956')).resolves.toBe('10 BAYFRONT AVENUE SINGAPORE 018956');
+    await expect(lookupPastRetry()).resolves.toBe('10 BAYFRONT AVENUE SINGAPORE 018956');
     expect(mockedAxios.get).toHaveBeenCalledTimes(2);
   });
 
   it('retries a 503 once and throws when both attempts fail', async () => {
     mockedAxios.post.mockResolvedValueOnce(TOKEN_RESPONSE(300));
     mockedAxios.get.mockResolvedValue({ status: 503, data: 'unavailable' });
-    await expect(lookupAddress('018956')).rejects.toThrow('status 503');
+    await expect(lookupPastRetry()).rejects.toThrow('status 503');
     expect(mockedAxios.get).toHaveBeenCalledTimes(2);
   });
 
   it('retries the token request once on a network error', async () => {
     mockedAxios.post.mockRejectedValueOnce(TIMEOUT).mockResolvedValueOnce(TOKEN_RESPONSE(300));
     mockedAxios.get.mockResolvedValueOnce(FOUND_RESPONSE);
-    await expect(lookupAddress('018956')).resolves.toBe('10 BAYFRONT AVENUE SINGAPORE 018956');
+    await expect(lookupPastRetry()).resolves.toBe('10 BAYFRONT AVENUE SINGAPORE 018956');
     expect(mockedAxios.post).toHaveBeenCalledTimes(2);
   });
 });
