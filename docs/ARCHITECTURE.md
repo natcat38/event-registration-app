@@ -55,7 +55,7 @@ Response: `{ total, events: Event[] }`, page size 10, ordered `createdAt DESC, u
 | `name` | trimmed, 1-255, unique | empty or too long 421; duplicate 400 `errors.name` |
 | `dateTime` | ISO 8601, Singapore if no offset, at most 100 years ahead | 421 `errors.dateTime` |
 | `postalCode` | 6 digits, must resolve in OneMap | not 6 digits 421; not found 400 `errors.postalCode` |
-| `deadline` | `YYYY-MM-DD`, not after `dateTime`'s Singapore date, at most 100 years ahead | 421 `errors.deadline` |
+| `deadline` | `YYYY-MM-DD` or an ISO date-time (only the Singapore date is kept), not after `dateTime`'s Singapore date, at most 100 years ahead | 421 `errors.deadline` |
 | `capacity` | integer 1-99999 | 421 `errors.capacity` |
 | `handlerUuid` | must exist and have no open event | malformed 421; unknown or busy 400 `errors.handlerUuid` |
 
@@ -94,7 +94,7 @@ Registration and event creation each run inside one transaction. `SELECT ... FOR
 
 ## Singapore time rules
 
-All timestamps are stored in UTC; Sequelize's timezone is fixed at `+00:00`. `deadline` is date-only input, meaning 23:59:59.999 Singapore on that date. A date-only `dateTime` means 00:00 Singapore. Responses echo `deadline` as a Singapore calendar date and every other timestamp as ISO UTC. The trend groups rows by `CONVERT_TZ` with numeric offsets, since named zones return NULL without loaded timezone tables. See ADR 0003.
+All timestamps are stored in UTC; Sequelize's timezone is fixed at `+00:00`. `deadline` keeps only the Singapore date of its input, meaning 23:59:59.999 Singapore on that date. A date-only `dateTime` means 00:00 Singapore. Responses echo `deadline` as a Singapore calendar date and every other timestamp as ISO UTC. The trend groups rows by `CONVERT_TZ` with numeric offsets, since named zones return NULL without loaded timezone tables. See ADR 0003.
 
 ## Known limits and production additions
 

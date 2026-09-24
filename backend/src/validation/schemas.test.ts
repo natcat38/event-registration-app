@@ -35,9 +35,13 @@ describe('createEventSchema', () => {
     expect(out.dateTime.toISOString()).toBe('2026-04-25T10:00:00.000Z');
     expect(out.deadline.toISOString()).toBe('2026-04-20T15:59:59.999Z');
   });
-  it('rejects a full timestamp deadline', () => {
+  it('keeps only the Singapore date of a timestamp deadline', () => {
+    const sameDay = validate(createEventSchema, { ...valid, deadline: '2026-04-20T08:00:00Z' });
+    expect(sameDay.deadline.toISOString()).toBe('2026-04-20T15:59:59.999Z');
+    const nextDay = validate(createEventSchema, { ...valid, deadline: '2026-04-20T18:00:00Z' });
+    expect(nextDay.deadline.toISOString()).toBe('2026-04-21T15:59:59.999Z');
     expect(
-      errorsOf(() => validate(createEventSchema, { ...valid, deadline: '2026-04-20T08:00:00Z' })),
+      errorsOf(() => validate(createEventSchema, { ...valid, deadline: '20 April 2026' })),
     ).toHaveProperty('deadline');
   });
   it('rejects a deadline after the event date, compared as Singapore dates', () => {

@@ -94,7 +94,7 @@ Every error body is `{ message: string, errors?: Record<string, string[]> }`. Se
 ## Assumptions and rules beyond the specification
 
 - One email address may register once per event; testers running repeated registrations must use a distinct address each time (ADR 0006).
-- The registration deadline is a calendar date (ADR 0003) and may not fall after the event date (ADR 0006).
+- The registration deadline is a Singapore calendar date: send `YYYY-MM-DD` or an ISO date-time, and only the Singapore date is kept (ADR 0003). It may not fall after the event date (ADR 0006).
 - Capacity must be a whole number from 1 to 99999 (ADR 0006).
 - The event date and the deadline may be at most 100 years ahead (ADR 0006).
 - A uuid must be RFC-shaped: a malformed id is 421, a well-formed but unknown id is 400 (ADR 0006).

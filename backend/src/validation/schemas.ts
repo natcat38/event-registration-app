@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { parseCalendarDate, parseInstant, sgtDate } from '../utils/dates';
+import { parseDeadline, parseInstant, sgtDate } from '../utils/dates';
 
 // see docs/adr/0006 for every rule here that goes beyond the spec.
 const uuid = z.string().uuid().toLowerCase();
@@ -25,11 +25,11 @@ export const createEventSchema = z
   })
   .transform((raw, ctx) => {
     const dateTime = parseInstant(raw.dateTime);
-    const deadline = parseCalendarDate(raw.deadline, 'end');
+    const deadline = parseDeadline(raw.deadline);
     if (!dateTime)
       ctx.addIssue({ code: 'custom', path: ['dateTime'], message: 'Invalid date/time' });
     if (!deadline)
-      ctx.addIssue({ code: 'custom', path: ['deadline'], message: 'Must be a date, YYYY-MM-DD' });
+      ctx.addIssue({ code: 'custom', path: ['deadline'], message: 'Must be a date (YYYY-MM-DD) or an ISO date-time' });
     if (!dateTime || !deadline) return z.NEVER;
     const max = new Date();
     max.setUTCFullYear(max.getUTCFullYear() + MAX_YEARS_AHEAD);

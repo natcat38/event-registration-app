@@ -34,6 +34,12 @@ export function parseInstant(s: unknown): Date | null {
   return Number.isNaN(d.getTime()) ? null : d;
 }
 
+/** A deadline: `YYYY-MM-DD` or any ISO date-time; only its Singapore date is kept, as the end of that day. */
+export function parseDeadline(s: unknown): Date | null {
+  const instant = parseInstant(s);
+  return instant ? parseCalendarDate(sgtDate(instant), 'end') : null;
+}
+
 /** The Singapore calendar date of an instant, `YYYY-MM-DD`. */
 export function sgtDate(d: Date): string {
   return new Date(d.getTime() + SGT_MS).toISOString().slice(0, 10);

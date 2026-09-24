@@ -8,7 +8,7 @@ The event company operates in Singapore time, but MySQL and Sequelize work natur
 
 ## Decision
 - Store all timestamps in UTC. Sequelize timezone is set to `+00:00`.
-- `deadline` is accepted only as `YYYY-MM-DD` (a real calendar date); any other form is 421. It means 23:59:59.999 Singapore time on that date. This is what makes the echoed value round-trip exactly.
+- `deadline` is accepted as `YYYY-MM-DD` or as any ISO date-time; only its Singapore calendar date is kept, meaning 23:59:59.999 Singapore time on that date. Anything else is 421. Keeping the date alone is what makes the echoed value round-trip exactly.
 - A date-only `dateTime` means 00:00 Singapore time on that date.
 - For `dateTime`: an ISO timestamp with an offset is taken as-is; one with no offset is treated as Singapore time (+08:00).
 - Responses echo `deadline` as a `YYYY-MM-DD` Singapore calendar date, and echo `dateTime` and `createdAt` as ISO UTC.

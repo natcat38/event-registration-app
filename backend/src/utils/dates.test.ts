@@ -1,5 +1,23 @@
 import { Op } from 'sequelize';
-import { openState, openWhere, parseCalendarDate, parseInstant, sgtDate } from './dates';
+import {
+  openState,
+  openWhere,
+  parseCalendarDate,
+  parseDeadline,
+  parseInstant,
+  sgtDate,
+} from './dates';
+
+describe('parseDeadline', () => {
+  it('keeps the Singapore date of a date or a date-time, as the end of that day', () => {
+    expect(parseDeadline('2026-04-20')?.toISOString()).toBe('2026-04-20T15:59:59.999Z');
+    expect(parseDeadline('2026-04-20T23:00:00+08:00')?.toISOString()).toBe(
+      '2026-04-20T15:59:59.999Z',
+    );
+    expect(parseDeadline('2026-04-20T18:00:00Z')?.toISOString()).toBe('2026-04-21T15:59:59.999Z');
+    expect(parseDeadline('nope')).toBeNull();
+  });
+});
 
 describe('parseCalendarDate', () => {
   it('maps a date to the start or end of that Singapore day', () => {
