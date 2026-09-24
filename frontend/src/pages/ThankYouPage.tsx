@@ -20,8 +20,7 @@ export default function ThankYouPage() {
   useDocumentTitle('Thank you');
   const location = useLocation();
 
-  // A direct visit (bookmark, reload) has no router state and nothing to
-  // show: the registration number only exists in the register response.
+  // A direct visit or reload has no router state: the registration number only exists in the register response.
   if (!isThankYouState(location.state)) {
     return <Navigate to="/" replace />;
   }

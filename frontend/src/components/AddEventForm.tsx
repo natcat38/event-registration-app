@@ -16,8 +16,7 @@ interface Props extends AddEventFormState {
   onClose: () => void;
 }
 
-// Presentational: all state and submit logic live in `useAddEventForm`,
-// owned by the dialog wrapper so it can also guard closing while submitting.
+// Presentational: state and submit logic live in `useAddEventForm`, owned by the dialog so it can guard closing.
 export default function AddEventForm({
   form,
   setField,

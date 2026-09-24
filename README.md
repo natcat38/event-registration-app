@@ -51,7 +51,7 @@ npm install
 npm run dev
 ```
 
-Listens on port 8001. Open http://localhost:8001 for the public page and http://localhost:8001/admin for the admin page. The UI calls the API at http://localhost:8000; set `VITE_API_URL` in `frontend/.env` to point elsewhere.
+Listens on port 8001 (use `localhost`, not `127.0.0.1`). Open http://localhost:8001 for the public page and http://localhost:8001/admin for the admin page. The UI calls the API at http://localhost:8000; set `VITE_API_URL` in `frontend/.env` to point elsewhere.
 
 Add your first event from the admin page; the tables start empty.
 
@@ -61,6 +61,7 @@ Backend, from `backend/`:
 - `npm test`: unit tests, no database needed, coverage threshold 50 percent.
 - `npm run test:integration`: needs the Compose database running; covers the concurrency races and the status-code contract. It runs the files one at a time because they share the database.
 - `npm run lint`
+- `npm run build`: type-checks and compiles to `dist/`; CI runs the same type check.
 
 Frontend, from `frontend/`:
 - `npm test`
@@ -100,10 +101,11 @@ Every error body is `{ message: string, errors?: Record<string, string[]> }`. Se
 - A uuid must be RFC-shaped: a malformed id is 421, a well-formed but unknown id is 400 (ADR 0006).
 - `deadline` is echoed as a Singapore calendar date; every other timestamp is echoed as ISO UTC (ADR 0003).
 - The `open` query parameter accepts `true` or `1`; any other value, or none, means no filter (ADR 0006).
-- The admin events list returns 10 events per page (see `docs/ARCHITECTURE.md`).
+- The admin events list returns 10 events per page (see `docs/ARCHITECTURE.md`). `page` defaults to 1 and must be a whole number up to 1000000; `search` and `name` are trimmed and at most 255 characters; anything else is 421.
+- Event names are unique ignoring case and accents (MySQL collation, ADR 0007). `emailAddress` is trimmed and lower-cased before the once-per-event check.
+- Trend rows are Singapore calendar dates from the creation date to the deadline; if the deadline is before the creation date, the trend has one row, for the creation date.
 - `POST /api/admin/events` returns an empty body on success (ADR 0002).
 - `GET /api/admin/handlers` is an extra endpoint, added only so the Add Event form has a handler list to show (ADR 0008).
-- The trend button on the admin table is labelled "View Trend"; the specification's sample calls it Trend.
 - `/health` is an operations endpoint, not part of the product API (ADR 0010).
 - The per-IP rate limiter on `POST /api/public/register` is off unless `RATE_LIMIT_ENABLED=true` is set in `.env`; when on, it allows 10000 requests per minute per IP and returns 429 past that (ADR 0009).
 - Past event dates are accepted on creation, so a closed event can be created directly (ADR 0006).

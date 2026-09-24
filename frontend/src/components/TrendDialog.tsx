@@ -24,8 +24,7 @@ interface Props {
 export default function TrendDialog({ eventUuid, eventName, onClose }: Props) {
   return (
     <Dialog open={Boolean(eventUuid)} onClose={onClose} fullWidth maxWidth="sm">
-      {/* Remounted with a fresh `key` per event, so state starts clean
-          instead of showing the previous event's rows for one frame. */}
+      {/* Remounted with a fresh `key` per event, so the previous event's rows never show for a frame. */}
       {eventUuid && (
         <TrendDialogContent
           key={eventUuid}

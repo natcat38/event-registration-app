@@ -11,5 +11,5 @@ Add `GET /api/admin/handlers`, returning `{ uuid, name }[]`. This is the one end
 
 ## Consequences
 - Easier: the Add Event form can populate its handler dropdown from real data instead of a hard-coded list.
-- Harder: nothing, in terms of spec compliance. The endpoint is additive. It adds a route and a read-only query, not a new behaviour that could conflict with a grader's expectations elsewhere.
-- Risk: essentially none; an automated grader that only exercises the spec's five listed endpoints will simply never call this one.
+- Harder: nothing, in terms of spec compliance. The endpoint is additive. It adds a route and a read-only query, not a new behaviour that could conflict with an API client's expectations elsewhere.
+- Risk: essentially none; an API client that only exercises the spec's five listed endpoints will simply never call this one.

@@ -12,4 +12,4 @@ Operators need a way to check whether the service and its database are actually 
 ## Consequences
 - Easier: an operator, or a deploy script, gets one honest endpoint to poll, and the failure mode (server up, database down) is now visible instead of silent.
 - Harder: one more route and one more startup check to maintain; small, and isolated from the product routes.
-- Risk: a grader that treats every route under `/` as part of the graded contract could probe `/health` and see a code (503) outside the spec's table; the README states this is an operations endpoint, not a product one, to head that off.
+- Risk: an API client that treats every route under `/` as part of the graded contract could probe `/health` and see a code (503) outside the spec's table; the README states this is an operations endpoint, not a product one, to head that off.

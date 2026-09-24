@@ -20,5 +20,5 @@ The spec allows "other validations you see fit" on event creation but is silent 
 - Unique email per event: an automated script that fills a capacity-5 event by repeating one address stops at the second call with 400, not five. The README must tell testers to use distinct addresses per registration.
 - Deadline-before-event-date: a script that sets a generous, valid-looking deadline without checking it against the event date can get an unexpected 421. The README states the rule plainly.
 - Capacity ceiling: a script that sets `capacity: 1000000` to build a "never fills" fixture gets 421, not a stored event. The README states the ceiling.
-- 100-year date ceiling: the common "never closes" test fixture of `9999-12-31` is rejected with 421 instead of accepted as an always-open event. The README names the ceiling and suggests a date a few years out instead.
-- Strict uuid variant: a hand-typed fake id like all-`1`s is 421, not 400 as "well-formed but unknown" would suggest. The README tells testers that a not-found fixture needs a real RFC-shaped uuid, for example one taken from a seeded handler.
+- 100-year date ceiling: the common "never closes" test fixture of `9999-12-31` is rejected with 421 instead of accepted as an always-open event. The README names the ceiling.
+- Strict uuid variant: a hand-typed fake id like all-`1`s is 421, not 400 as "well-formed but unknown" would suggest. The README states the split.

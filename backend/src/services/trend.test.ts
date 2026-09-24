@@ -29,7 +29,7 @@ describe('buildTrend', () => {
     ]);
   });
 
-  it('matches the worked example in the tech scope', () => {
+  it('matches a worked example with a gap day and a partial day', () => {
     const out = buildTrend('2026-04-15', '2026-04-20', { '2026-04-18': 2 });
     expect(out.map((r) => r.registrationCount)).toEqual([0, 0, 0, 2, 2, 2]);
     expect(out.map((r) => r.newRegistrationCount)).toEqual([0, 0, 0, 2, 0, 0]);

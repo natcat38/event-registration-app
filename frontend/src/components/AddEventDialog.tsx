@@ -9,8 +9,7 @@ interface Props {
 }
 
 export default function AddEventDialog({ open, onClose, onCreated }: Props) {
-  // Mounted fresh each time the dialog opens, so form/error state starts
-  // clean without resetting it inside an effect.
+  // Mounted fresh each time the dialog opens, so form and error state start clean without an effect.
   return open ? <AddEventDialogContent onClose={onClose} onCreated={onCreated} /> : null;
 }
 
@@ -21,9 +20,7 @@ function AddEventDialogContent({ onClose, onCreated }: Omit<Props, 'open'>) {
   return (
     <Dialog
       open
-      // While submitting, Escape and a backdrop click must not close the
-      // dialog: a late response after close could otherwise reopen or
-      // mutate a dialog the user has since dismissed and reopened.
+      // While submitting, Escape and backdrop clicks must not close: a late response could touch a reopened dialog.
       onClose={(_, reason) => {
         if (submitting && (reason === 'escapeKeyDown' || reason === 'backdropClick')) return;
         onClose();
