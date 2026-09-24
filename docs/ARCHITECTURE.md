@@ -98,7 +98,7 @@ All timestamps are stored in UTC; Sequelize's timezone is fixed at `+00:00`. `de
 
 ## Known limits and production additions
 
-- No authentication on any route. The specification forbids it for this scope.
+- No authentication on any route. The specification does not require it for this scope.
 - No idempotency keys on write endpoints; a retried POST can create a duplicate attempt at the application layer, though the unique indexes still prevent duplicate data.
 - No graceful shutdown handling.
 - An OneMap outage turns every event creation into a 500; there is no fallback address source. See ADR 0005.
