@@ -33,3 +33,23 @@ export function formatDateTime(iso: string): string {
     hour12: true,
   });
 }
+
+/** Renders a `YYYY-MM-DD` calendar date as "11 Jan 2027". Parsed and printed in UTC so no timezone shifts the day. */
+export function formatDate(date: string): string {
+  return new Date(`${date}T00:00:00Z`).toLocaleDateString('en-SG', {
+    timeZone: 'UTC',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}
+
+/** Renders the Singapore calendar day of an ISO UTC instant, e.g. "25 Apr 2026" (no time of day). */
+export function formatInstantDate(iso: string): string {
+  return new Date(iso).toLocaleDateString('en-SG', {
+    timeZone: 'Asia/Singapore',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  });
+}

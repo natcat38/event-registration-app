@@ -1,5 +1,5 @@
 import { Stack, Typography } from '@mui/material';
-import { formatDateTime } from '../utils/dates';
+import { formatDate, formatDateTime } from '../utils/dates';
 import type { PublicEvent } from '../api/client';
 
 export default function SelectedEventDetails({ event }: { event: PublicEvent }) {
@@ -12,7 +12,7 @@ export default function SelectedEventDetails({ event }: { event: PublicEvent }) 
         <strong>Address:</strong> {event.address}
       </Typography>
       <Typography variant="body2">
-        <strong>Registration deadline:</strong> {event.deadline}
+        <strong>Registration deadline:</strong> {formatDate(event.deadline)}
       </Typography>
     </Stack>
   );

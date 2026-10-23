@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { getTrend, toApiError, type TrendPoint } from '../api/client';
+import { formatDate } from '../utils/dates';
 import LoadingStatus from './LoadingStatus';
 
 interface Props {
@@ -81,7 +82,7 @@ function TrendDialogContent({ eventUuid, eventName, onClose }: Props & { eventUu
             <TableBody>
               {trend.map((point) => (
                 <TableRow key={point.date}>
-                  <TableCell>{point.date}</TableCell>
+                  <TableCell>{formatDate(point.date)}</TableCell>
                   <TableCell align="right">{point.newRegistrationCount}</TableCell>
                   <TableCell align="right">{point.registrationCount}</TableCell>
                 </TableRow>

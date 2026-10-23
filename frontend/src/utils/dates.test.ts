@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { isOpen } from './dates';
+import { formatDate, formatInstantDate, isOpen } from './dates';
 
 describe('isOpen', () => {
   beforeEach(() => {
@@ -30,5 +30,22 @@ describe('isOpen', () => {
 
   it('is closed once capacity is reached, even before the deadline', () => {
     expect(isOpen({ deadline: '2026-04-25', capacity: 5, registrationCount: 5 })).toBe(false);
+  });
+});
+
+describe('formatDate', () => {
+  it('prints a calendar date in the same style as formatDateTime', () => {
+    expect(formatDate('2027-01-11')).toBe('11 Jan 2027');
+  });
+
+  it('never shifts the day, whatever the machine timezone is', () => {
+    expect(formatDate('2026-12-31')).toBe('31 Dec 2026');
+    expect(formatDate('2026-03-01')).toBe('1 Mar 2026');
+  });
+});
+
+describe('formatInstantDate', () => {
+  it('uses the Singapore day, which is ahead of UTC late in the evening', () => {
+    expect(formatInstantDate('2026-10-21T17:00:00.000Z')).toBe('22 Oct 2026');
   });
 });
