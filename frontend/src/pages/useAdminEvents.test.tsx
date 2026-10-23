@@ -1,5 +1,7 @@
 // @vitest-environment jsdom
 import { act, renderHook } from '@testing-library/react';
+import type { ReactNode } from 'react';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { AdminEvent, AdminEventsResult } from '../api/client';
 import { useAdminEvents } from './useAdminEvents';
@@ -27,6 +29,24 @@ function makeEvent(uuid: string): AdminEvent {
   };
 }
 
+/** Renders the hook inside a router at `url`; `location()` reads the current URL back. */
+function setup(url = '/admin') {
+  let currentLocation = '';
+  function Probe() {
+    const loc = useLocation();
+    currentLocation = loc.pathname + loc.search;
+    return null;
+  }
+  const wrapper = ({ children }: { children: ReactNode }) => (
+    <MemoryRouter initialEntries={[url]}>
+      <Probe />
+      {children}
+    </MemoryRouter>
+  );
+  const hook = renderHook(() => useAdminEvents(), { wrapper });
+  return { ...hook, location: () => currentLocation };
+}
+
 function deferred<T>() {
   let resolve!: (value: T) => void;
   const promise = new Promise<T>((res) => {
@@ -43,7 +63,7 @@ describe('useAdminEvents', () => {
   it('debounces search input by 300 ms before querying', async () => {
     mockedList.mockResolvedValue({ events: [], total: 0 } as AdminEventsResult);
     vi.useFakeTimers();
-    const { result } = renderHook(() => useAdminEvents());
+    const { result } = setup();
     await act(async () => {
       await vi.advanceTimersByTimeAsync(0);
     });
@@ -69,7 +89,7 @@ describe('useAdminEvents', () => {
     mockedList.mockImplementationOnce(() => first.promise);
     mockedList.mockImplementationOnce(() => second.promise);
 
-    const { result } = renderHook(() => useAdminEvents());
+    const { result } = setup();
     act(() => result.current.setPage(2));
     expect(mockedList).toHaveBeenCalledTimes(2);
 
@@ -84,5 +104,72 @@ describe('useAdminEvents', () => {
       await Promise.resolve();
     });
     expect(result.current.events).toEqual([makeEvent('fresh')]);
+  });
+
+  it('reads search, open filter and page from the URL on load', async () => {
+    mockedList.mockResolvedValue({ events: [], total: 0 } as AdminEventsResult);
+    const { result } = setup('/admin?q=hall&open=true&page=3');
+    await act(async () => {});
+    expect(mockedList).toHaveBeenCalledWith({ page: 3, search: 'hall', open: true });
+    expect(result.current.searchInput).toBe('hall');
+  });
+
+  it('keeps the page from the URL instead of resetting it to 1 on load', async () => {
+    vi.useFakeTimers();
+    mockedList.mockResolvedValue({ events: [makeEvent('a')], total: 30 } as AdminEventsResult);
+    const { location } = setup('/admin?q=hall&page=2');
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(1000);
+    });
+    expect(location()).toBe('/admin?q=hall&page=2');
+    expect(mockedList).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
+  });
+
+  it('writes search, filter and page to the URL, and a new search or filter returns to page 1', async () => {
+    vi.useFakeTimers();
+    mockedList.mockResolvedValue({ events: [], total: 0 } as AdminEventsResult);
+    const { result, location } = setup('/admin?page=4');
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(0);
+    });
+
+    act(() => result.current.setSearchInput('abc'));
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(300);
+    });
+    expect(location()).toBe('/admin?q=abc');
+
+    act(() => result.current.setPage(2));
+    expect(location()).toBe('/admin?q=abc&page=2');
+
+    act(() => result.current.setOpenOnly(true));
+    expect(location()).toBe('/admin?q=abc&open=true');
+    vi.useRealTimers();
+  });
+
+  it('moves to the last page when the URL points past the end', async () => {
+    mockedList.mockResolvedValueOnce({ events: [], total: 25 } as AdminEventsResult);
+    mockedList.mockResolvedValue({ events: [makeEvent('last')], total: 25 } as AdminEventsResult);
+    const { result, location } = setup('/admin?page=9');
+    await act(async () => {});
+    expect(location()).toBe('/admin?page=3');
+    expect(result.current.page).toBe(3);
+  });
+
+  it('keeps showing the previous rows while the next page loads', async () => {
+    const next = deferred<AdminEventsResult>();
+    mockedList.mockResolvedValueOnce({
+      events: [makeEvent('first')],
+      total: 20,
+    } as AdminEventsResult);
+    mockedList.mockImplementationOnce(() => next.promise);
+    const { result } = setup();
+    await act(async () => {});
+    expect(result.current.events).toEqual([makeEvent('first')]);
+
+    act(() => result.current.setPage(2));
+    expect(result.current.loading).toBe(true);
+    expect(result.current.events).toEqual([makeEvent('first')]);
   });
 });

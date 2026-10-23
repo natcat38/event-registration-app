@@ -117,7 +117,7 @@ Every error body is `{ message: string, errors?: Record<string, string[]> }`. Se
 ## Screenshots
 
 ![Admin events table](docs/screenshots/admin-events.png)
-The admin events table with search, the open-events filter, and paging.
+The admin events table with search, the open-events filter, and paging. Search, filter and page are kept in the URL, so reload, Back and a shared link return to the same view. Below 600 px each event is a card instead of a table row.
 
 ![Public registration](docs/screenshots/public-register.png)
 The public page: pick an open event, then register with an email address.

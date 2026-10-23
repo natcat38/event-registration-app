@@ -1,9 +1,17 @@
 import { AppBar, Box, Button, Container, Toolbar, Typography } from '@mui/material';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, NavLink, Route, Routes } from 'react-router-dom';
 import AdminPage from './pages/AdminPage';
 import PublicPage from './pages/PublicPage';
 import ThankYouPage from './pages/ThankYouPage';
 import { useDocumentTitle } from './utils/useDocumentTitle';
+
+// NavLink sets aria-current="page" on the active link; a darker fill plus an underline marks it without lowering contrast.
+const navLinkSx = {
+  '&[aria-current="page"]': {
+    bgcolor: 'rgba(0, 0, 0, 0.2)',
+    boxShadow: 'inset 0 -2px 0 #fff',
+  },
+};
 
 function NotFound() {
   useDocumentTitle('Not found');
@@ -34,20 +42,20 @@ export default function App() {
       >
         Skip to content
       </Box>
-      <AppBar position="static">
+      <AppBar position="sticky">
         <Toolbar>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Event Registration
           </Typography>
-          <Button color="inherit" component={Link} to="/">
+          <Button color="inherit" component={NavLink} to="/" end sx={navLinkSx}>
             Public
           </Button>
-          <Button color="inherit" component={Link} to="/admin">
+          <Button color="inherit" component={NavLink} to="/admin" sx={navLinkSx}>
             Admin
           </Button>
         </Toolbar>
       </AppBar>
-      <Container id="main" maxWidth="lg" sx={{ py: 4 }}>
+      <Container id="main" maxWidth="xl" sx={{ py: 4, scrollMarginTop: { xs: 56, sm: 64 } }}>
         <Routes>
           <Route path="/" element={<PublicPage />} />
           <Route path="/thank-you" element={<ThankYouPage />} />

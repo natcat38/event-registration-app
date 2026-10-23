@@ -10,8 +10,10 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material';
-import { formatDateTime } from '../utils/dates';
+import { formatDate, formatDateTime, formatInstantDate } from '../utils/dates';
 import type { AdminEvent } from '../api/client';
+import AdminEventCards from './AdminEventCards';
+import RegisteredCount from './RegisteredCount';
 import StatusBadge from './StatusBadge';
 
 interface Props {
@@ -22,7 +24,17 @@ interface Props {
   onViewTrend: (event: { uuid: string; name: string }) => void;
 }
 
-// TableContainer scrolls horizontally at phone width; minWidth stops Name and Address splitting short words.
+const nowrap = { whiteSpace: 'nowrap' } as const;
+// Long text stays within two lines; the full text is in the cell's title.
+const twoLines = {
+  display: '-webkit-box',
+  WebkitLineClamp: 2,
+  WebkitBoxOrient: 'vertical',
+  overflow: 'hidden',
+  overflowWrap: 'anywhere',
+} as const;
+
+// Table from `sm` up, cards below it (see AdminEventCards). Both are in the DOM; CSS shows one.
 export default function AdminEventsTable({
   events,
   page,
@@ -32,18 +44,24 @@ export default function AdminEventsTable({
 }: Props) {
   return (
     <>
-      <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
-        <Table size="small">
-          <TableHead sx={{ '& th': { whiteSpace: 'nowrap' } }}>
+      <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+        <AdminEventCards events={events} onViewTrend={onViewTrend} />
+      </Box>
+
+      <TableContainer
+        component={Paper}
+        sx={{ display: { xs: 'none', sm: 'block' }, overflowX: 'auto' }}
+      >
+        <Table size="small" sx={{ '& th, & td': { px: 1.5 } }}>
+          <TableHead sx={{ '& th': nowrap }}>
             <TableRow>
               <TableCell>Name</TableCell>
               <TableCell>Created On</TableCell>
               <TableCell>Event Date Time</TableCell>
               <TableCell>Address</TableCell>
-              <TableCell>Registration Deadline</TableCell>
+              <TableCell>Deadline</TableCell>
               <TableCell>Handler</TableCell>
-              <TableCell align="right">Capacity</TableCell>
-              <TableCell align="right">No. of Registration</TableCell>
+              <TableCell>Registered</TableCell>
               <TableCell>Status</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
@@ -51,26 +69,27 @@ export default function AdminEventsTable({
           <TableBody>
             {events.map((event) => (
               <TableRow key={event.uuid}>
-                <TableCell sx={{ overflowWrap: 'anywhere', minWidth: 120 }}>{event.name}</TableCell>
-                <TableCell>{formatDateTime(event.createdAt)}</TableCell>
-                <TableCell>{formatDateTime(event.dateTime)}</TableCell>
-                <TableCell sx={{ overflowWrap: 'anywhere', minWidth: 120 }}>
-                  {event.address}
+                <TableCell sx={{ minWidth: 200 }} title={event.name}>
+                  <Box sx={twoLines}>{event.name}</Box>
                 </TableCell>
-                <TableCell>{event.deadline}</TableCell>
-                <TableCell>{event.handler.name}</TableCell>
-                <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {event.capacity}
+                <TableCell sx={nowrap} title={formatDateTime(event.createdAt)}>
+                  {formatInstantDate(event.createdAt)}
                 </TableCell>
-                <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                  {event.registrationCount}
+                <TableCell sx={nowrap}>{formatDateTime(event.dateTime)}</TableCell>
+                <TableCell sx={{ minWidth: 200 }} title={event.address}>
+                  <Box sx={twoLines}>{event.address}</Box>
+                </TableCell>
+                <TableCell sx={nowrap}>{formatDate(event.deadline)}</TableCell>
+                <TableCell sx={nowrap}>{event.handler.name}</TableCell>
+                <TableCell>
+                  <RegisteredCount count={event.registrationCount} capacity={event.capacity} />
                 </TableCell>
                 <TableCell>
                   <StatusBadge event={event} />
                 </TableCell>
                 <TableCell>
                   <Button
-                    size="medium"
+                    sx={nowrap}
                     onClick={() => onViewTrend({ uuid: event.uuid, name: event.name })}
                   >
                     View Trend
@@ -82,7 +101,7 @@ export default function AdminEventsTable({
         </Table>
       </TableContainer>
 
-      <Box display="flex" justifyContent="center">
+      <Box display="flex" justifyContent="center" sx={{ mt: 3 }}>
         <Pagination
           count={pageCount}
           page={page}
