@@ -43,6 +43,18 @@ describe('usePublicRegistration', () => {
     expect(result.current.events).toEqual([event]);
   });
 
+  it('reload clears a load error and fetches the events again', async () => {
+    mockedListPublicEvents.mockRejectedValueOnce({ message: "Can't reach the server." });
+    const { result } = renderHook(() => usePublicRegistration());
+    await waitFor(() => expect(result.current.loadError).toBe("Can't reach the server."));
+
+    mockedListPublicEvents.mockResolvedValueOnce([event]);
+    act(() => result.current.reload());
+
+    await waitFor(() => expect(result.current.events).toEqual([event]));
+    expect(result.current.loadError).toBeNull();
+  });
+
   it('sets a field error and does not refetch on a duplicate-email 400', async () => {
     mockedListPublicEvents.mockResolvedValue([event]);
     const apiError: ApiError = {

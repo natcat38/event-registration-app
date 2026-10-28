@@ -106,5 +106,6 @@ export function usePublicRegistration() {
     selectEvent,
     changeEmail,
     submitRegistration,
+    reload: () => void loadEvents(),
   };
 }

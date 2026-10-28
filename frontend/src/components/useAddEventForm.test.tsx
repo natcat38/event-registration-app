@@ -16,6 +16,7 @@ const mockedCreateEvent = createEvent as ReturnType<typeof vi.fn>;
 const mockedListHandlers = listHandlers as ReturnType<typeof vi.fn>;
 
 const handler: Handler = { uuid: 'h-1', name: 'Handler One' };
+const ADDRESS = '1 RAFFLES PLACE SINGAPORE 048616';
 
 const validFields = {
   name: 'Party',
@@ -76,9 +77,9 @@ describe('useAddEventForm', () => {
   });
 
   it('ignores a late create response after the dialog has closed', async () => {
-    let resolveCreate!: () => void;
+    let resolveCreate!: (value: { address: string }) => void;
     mockedCreateEvent.mockImplementation(
-      () => new Promise<void>((resolve) => (resolveCreate = resolve)),
+      () => new Promise<{ address: string }>((resolve) => (resolveCreate = resolve)),
     );
     const onClose = vi.fn();
     const onCreated = vi.fn();
@@ -91,7 +92,7 @@ describe('useAddEventForm', () => {
     unmount();
 
     await act(async () => {
-      resolveCreate();
+      resolveCreate({ address: ADDRESS });
       await Promise.resolve();
     });
 
@@ -100,7 +101,7 @@ describe('useAddEventForm', () => {
   });
 
   it('calls onCreated then onClose on success', async () => {
-    mockedCreateEvent.mockResolvedValue(undefined);
+    mockedCreateEvent.mockResolvedValue({ address: ADDRESS });
     const calls: string[] = [];
     const onClose = vi.fn(() => calls.push('close'));
     const onCreated = vi.fn(() => calls.push('created'));
@@ -112,6 +113,57 @@ describe('useAddEventForm', () => {
     });
 
     expect(calls).toEqual(['created', 'close']);
+  });
+
+  it('passes the trimmed name and the resolved address to onCreated', async () => {
+    mockedCreateEvent.mockResolvedValue({ address: ADDRESS });
+    const onCreated = vi.fn();
+    const { result } = renderHook(() => useAddEventForm(vi.fn(), onCreated));
+    fillValidForm(result);
+    act(() => result.current.setField('name', '  Party  '));
+
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    expect(onCreated).toHaveBeenCalledWith({ name: 'Party', address: ADDRESS });
+  });
+
+  it('explains a server failure (500) in plain words and keeps what was typed', async () => {
+    mockedCreateEvent.mockRejectedValue({ message: 'The server ran into a problem.', status: 500 });
+    const onClose = vi.fn();
+    const { result } = renderHook(() => useAddEventForm(onClose, vi.fn()));
+    fillValidForm(result);
+
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    expect(result.current.error?.message).toMatch(/couldn't save the event/i);
+    expect(result.current.error?.message).toMatch(/details are kept/i);
+    expect(result.current.form.name).toBe('Party');
+    expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it('keeps a 400 message as the server wrote it', async () => {
+    mockedCreateEvent.mockRejectedValue({ message: 'Postal code not found.', status: 400 });
+    const { result } = renderHook(() => useAddEventForm(vi.fn(), vi.fn()));
+    fillValidForm(result);
+
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    expect(result.current.error?.message).toBe('Postal code not found.');
+  });
+
+  it('is dirty once any field has text, and clean on a fresh form', () => {
+    const { result } = renderHook(() => useAddEventForm(vi.fn(), vi.fn()));
+    expect(result.current.dirty).toBe(false);
+
+    act(() => result.current.setField('postalCode', '1'));
+
+    expect(result.current.dirty).toBe(true);
   });
 
   it('leaves error null once the last invalid field is corrected', async () => {

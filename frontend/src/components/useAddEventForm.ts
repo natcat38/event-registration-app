@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { createEvent, listHandlers, toApiError, type ApiError, type Handler } from '../api/client';
 import { fieldOrder, validate } from './addEventValidation';
+import { SAVE_FAILED_MESSAGE, type CreatedEvent } from './createdEvent';
 
 const emptyForm = {
   name: '',
@@ -14,9 +15,10 @@ const emptyForm = {
 type FormState = typeof emptyForm;
 
 export { fieldOrder };
+export type { CreatedEvent };
 
 /** Field-level state and submit logic for the Add Event form, mounted fresh each time the dialog opens. */
-export function useAddEventForm(onClose: () => void, onCreated: () => void) {
+export function useAddEventForm(onClose: () => void, onCreated: (created: CreatedEvent) => void) {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [handlers, setHandlers] = useState<Handler[]>([]);
   const [handlersError, setHandlersError] = useState<string | null>(null);
@@ -68,6 +70,8 @@ export function useAddEventForm(onClose: () => void, onCreated: () => void) {
     .flatMap(([, messages]) => messages);
 
   const capacityNumber = Number(form.capacity);
+  // Anything typed counts: closing then asks before throwing it away.
+  const dirty = Object.values(form).some((value) => value !== '');
 
   async function submit() {
     const validationErrors = validate(form);
@@ -79,8 +83,9 @@ export function useAddEventForm(onClose: () => void, onCreated: () => void) {
     setSubmitting(true);
     setError(null);
     try {
-      await createEvent({
-        name: form.name.trim(),
+      const name = form.name.trim();
+      const { address } = await createEvent({
+        name,
         // datetime-local has no offset; Singapore is sent explicitly. see docs/adr/0003
         dateTime: `${form.dateTime}:00+08:00`,
         postalCode: form.postalCode,
@@ -89,11 +94,16 @@ export function useAddEventForm(onClose: () => void, onCreated: () => void) {
         handlerUuid: form.handlerUuid,
       });
       if (closedRef.current) return;
-      onCreated();
+      onCreated({ name, address });
       onClose();
     } catch (err) {
       if (closedRef.current) return;
-      setError(toApiError(err));
+      const apiError = toApiError(err);
+      setError(
+        apiError.status !== undefined && apiError.status >= 500
+          ? { ...apiError, message: SAVE_FAILED_MESSAGE }
+          : apiError,
+      );
       setSubmitCount((n) => n + 1);
     } finally {
       if (!closedRef.current) setSubmitting(false);
@@ -111,6 +121,7 @@ export function useAddEventForm(onClose: () => void, onCreated: () => void) {
     otherErrors,
     submit,
     submitCount,
+    dirty,
   };
 }
 

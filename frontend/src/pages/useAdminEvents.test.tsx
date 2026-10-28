@@ -106,6 +106,25 @@ describe('useAdminEvents', () => {
     expect(result.current.events).toEqual([makeEvent('fresh')]);
   });
 
+  it('showNewest clears search, filter and page, and reloads even when the URL did not change', async () => {
+    mockedList.mockResolvedValue({ events: [makeEvent('a')], total: 30 } as AdminEventsResult);
+    const { result, location } = setup('/admin?q=hall&open=true&page=2');
+    await act(async () => {});
+    expect(mockedList).toHaveBeenCalledTimes(1);
+
+    act(() => result.current.showNewest());
+    await act(async () => {});
+
+    expect(location()).toBe('/admin');
+    expect(result.current.searchInput).toBe('');
+    expect(mockedList).toHaveBeenLastCalledWith({ page: 1, search: '', open: false });
+
+    mockedList.mockClear();
+    act(() => result.current.showNewest());
+    await act(async () => {});
+    expect(mockedList).toHaveBeenCalledTimes(1);
+  });
+
   it('reads search, open filter and page from the URL on load', async () => {
     mockedList.mockResolvedValue({ events: [], total: 0 } as AdminEventsResult);
     const { result } = setup('/admin?q=hall&open=true&page=3');

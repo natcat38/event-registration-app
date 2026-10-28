@@ -15,13 +15,14 @@ import type { AdminEvent } from '../api/client';
 import AdminEventCards from './AdminEventCards';
 import RegisteredCount from './RegisteredCount';
 import StatusBadge from './StatusBadge';
+import type { TrendTarget } from './TrendDialog';
 
 interface Props {
   events: AdminEvent[];
   page: number;
   pageCount: number;
   onPageChange: (page: number) => void;
-  onViewTrend: (event: { uuid: string; name: string }) => void;
+  onViewTrend: (event: TrendTarget) => void;
 }
 
 const nowrap = { whiteSpace: 'nowrap' } as const;
@@ -90,7 +91,9 @@ export default function AdminEventsTable({
                 <TableCell>
                   <Button
                     sx={nowrap}
-                    onClick={() => onViewTrend({ uuid: event.uuid, name: event.name })}
+                    onClick={() =>
+                      onViewTrend({ uuid: event.uuid, name: event.name, capacity: event.capacity })
+                    }
                   >
                     View Trend
                   </Button>

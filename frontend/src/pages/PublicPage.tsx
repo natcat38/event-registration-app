@@ -14,6 +14,7 @@ import {
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoadingStatus from '../components/LoadingStatus';
+import RetryAlert from '../components/RetryAlert';
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import SelectedEventDetails from './SelectedEventDetails';
 import { usePublicRegistration } from './usePublicRegistration';
@@ -32,6 +33,7 @@ export default function PublicPage() {
     selectEvent,
     changeEmail,
     submitRegistration,
+    reload,
   } = usePublicRegistration();
 
   const selectedEvent = events.find((e) => e.uuid === selectedUuid) ?? null;
@@ -50,7 +52,7 @@ export default function PublicPage() {
 
   if (loading) return <LoadingStatus label="Loading events…" />;
 
-  if (loadError) return <Alert severity="error">{loadError}</Alert>;
+  if (loadError) return <RetryAlert message={loadError} onRetry={reload} />;
 
   return (
     <Paper sx={{ p: 4, maxWidth: 600, mx: 'auto' }}>
