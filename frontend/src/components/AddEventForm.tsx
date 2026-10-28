@@ -88,6 +88,10 @@ export default function AddEventForm({
               error={Boolean(fieldError('postalCode'))}
               helperText={fieldError('postalCode') ?? '6 digits'}
               disabled={submitting}
+              // A phone shows the number pad, and the browser can offer a saved postal code.
+              slotProps={{
+                htmlInput: { inputMode: 'numeric', maxLength: 6, autoComplete: 'postal-code' },
+              }}
               fullWidth
               required
             />

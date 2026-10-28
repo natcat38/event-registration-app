@@ -44,7 +44,21 @@ export default function App() {
       </Box>
       <AppBar position="sticky">
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          {/* Text wordmark: the app's name, linking home. */}
+          <Typography
+            variant="h6"
+            component={Link}
+            to="/"
+            sx={{
+              flexGrow: 1,
+              color: 'inherit',
+              textDecoration: 'none',
+              fontWeight: 700,
+              minHeight: 44,
+              display: 'flex',
+              alignItems: 'center',
+            }}
+          >
             Event Registration
           </Typography>
           <Button color="inherit" component={NavLink} to="/" end sx={navLinkSx}>
