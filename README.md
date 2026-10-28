@@ -106,7 +106,7 @@ Every error body is `{ message: string, errors?: Record<string, string[]> }`. Se
 - The admin events list returns 10 events per page (see `docs/ARCHITECTURE.md`). `page` defaults to 1 and must be a whole number up to 1000000; `search` and `name` are trimmed and at most 255 characters; anything else is 421.
 - Event names are unique ignoring case and accents (MySQL collation, ADR 0007). `emailAddress` is trimmed and lower-cased before the once-per-event check.
 - Trend rows are Singapore calendar dates from the creation date to the deadline; if the deadline is before the creation date, the trend has one row, for the creation date.
-- `POST /api/admin/events` returns an empty body on success (ADR 0002).
+- `POST /api/admin/events` returns `{ address }`, the address OneMap resolved from the postal code, on success (ADR 0011).
 - `GET /api/admin/handlers` is an extra endpoint, added only so the Add Event form has a handler list to show (ADR 0008).
 - `/health` is an operations endpoint, not part of the product API (ADR 0010).
 - The per-IP rate limiter on `POST /api/public/register` is off unless `RATE_LIMIT_ENABLED=true` is set in `.env`; when on, it allows 10000 requests per minute per IP and returns 429 past that (ADR 0009).

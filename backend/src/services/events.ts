@@ -47,8 +47,11 @@ async function findHandlerOrThrow(uuid: string, options?: FindOptions<Handler>):
   return handler;
 }
 
-/** Creates an admin event. see docs/adr/0004 for the locking shape and docs/adr/0005 for OneMap. */
-export async function createEvent(input: CreateEventInput): Promise<void> {
+/**
+ * Creates an admin event and returns the address OneMap resolved, so staff can confirm the postal code. see docs/adr/0011
+ * Locking shape: docs/adr/0004. OneMap: docs/adr/0005.
+ */
+export async function createEvent(input: CreateEventInput): Promise<{ address: string }> {
   // Cheap check first so an unknown handler never costs a OneMap call; the locked check is authoritative.
   await findHandlerOrThrow(input.handlerUuid);
   const address = await lookupAddress(input.postalCode);
@@ -78,4 +81,5 @@ export async function createEvent(input: CreateEventInput): Promise<void> {
       }
     }),
   );
+  return { address };
 }
