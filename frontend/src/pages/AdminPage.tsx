@@ -71,6 +71,7 @@ export default function AdminPage() {
               <Checkbox checked={openOnly} onChange={(e) => setOpenOnly(e.target.checked)} />
             }
             label="Open Events Only"
+            sx={{ minHeight: 44 }}
           />
         </Stack>
         {/* Reserved height: the bar appearing must not push the table down. */}

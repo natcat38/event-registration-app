@@ -7,6 +7,14 @@ import {
   type PublicEvent,
 } from '../api/client';
 
+/** What the thank-you page shows; carried in router state because nothing else stores it. */
+export interface RegistrationResult {
+  eventName: string;
+  registrationNo: string;
+  dateTime?: string;
+  address?: string;
+}
+
 /** Data and submit logic for the public registration page (kept out of the component to stay under ~120 lines). */
 export function usePublicRegistration() {
   const [events, setEvents] = useState<PublicEvent[]>([]);
@@ -68,10 +76,7 @@ export function usePublicRegistration() {
   }
 
   // The dropdown and email field are disabled while submitting, so the selection cannot change mid-request.
-  async function submitRegistration(): Promise<{
-    eventName: string;
-    registrationNo: string;
-  } | null> {
+  async function submitRegistration(): Promise<RegistrationResult | null> {
     if (email.trim() === '') {
       setSubmitError({ message: '', errors: { emailAddress: ['Email address is required.'] } });
       return null;
@@ -82,8 +87,14 @@ export function usePublicRegistration() {
     setSubmitError(null);
     try {
       const { registrationNo } = await register(eventAtSubmit, emailAtSubmit);
-      const eventName = events.find((e) => e.uuid === eventAtSubmit)?.name ?? '';
-      return { eventName, registrationNo };
+      const event = events.find((e) => e.uuid === eventAtSubmit);
+      // The thank-you page repeats the event's date and address: the page is the only proof of registration.
+      return {
+        eventName: event?.name ?? '',
+        dateTime: event?.dateTime,
+        address: event?.address,
+        registrationNo,
+      };
     } catch (err) {
       const apiError = toApiError(err);
       setSubmitError(apiError);

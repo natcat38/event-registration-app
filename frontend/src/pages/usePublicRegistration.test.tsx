@@ -2,7 +2,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ApiError, PublicEvent } from '../api/client';
-import { usePublicRegistration } from './usePublicRegistration';
+import { usePublicRegistration, type RegistrationResult } from './usePublicRegistration';
 
 vi.mock('../api/client', () => ({
   listPublicEvents: vi.fn(),
@@ -90,18 +90,23 @@ describe('usePublicRegistration', () => {
     await waitFor(() => expect(mockedListPublicEvents).toHaveBeenCalledTimes(2));
   });
 
-  it('returns the event name and registration number on success', async () => {
+  it('returns the event name, date, address and registration number on success', async () => {
     mockedListPublicEvents.mockResolvedValue([event]);
     mockedRegister.mockResolvedValue({ registrationNo: '00001' });
 
     const { result } = renderHook(() => usePublicRegistration());
     await selectAndFillEmail(result);
 
-    let outcome: { eventName: string; registrationNo: string } | null = null;
+    let outcome: RegistrationResult | null = null;
     await act(async () => {
       outcome = await result.current.submitRegistration();
     });
 
-    expect(outcome).toEqual({ eventName: 'Event One', registrationNo: '00001' });
+    expect(outcome).toEqual({
+      eventName: 'Event One',
+      dateTime: event.dateTime,
+      address: event.address,
+      registrationNo: '00001',
+    });
   });
 });

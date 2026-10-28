@@ -82,9 +82,11 @@ export default function PublicPage() {
               label="Event"
               value={selectedUuid}
               onChange={(e: SelectChangeEvent) => selectEvent(e.target.value)}
+              // Long names wrap inside a menu no wider than the screen instead of running 1000 px wide.
+              MenuProps={{ slotProps: { paper: { sx: { maxWidth: 'min(90vw, 600px)' } } } }}
             >
               {events.map((event) => (
-                <MenuItem key={event.uuid} value={event.uuid}>
+                <MenuItem key={event.uuid} value={event.uuid} sx={{ whiteSpace: 'normal' }}>
                   {event.name}
                 </MenuItem>
               ))}

@@ -140,6 +140,7 @@ frontend/src/
   pages/              one component per route, with its hook and sub-components
   components/         dialogs, form, validation helper, table, status badge
   utils/              the frontend copy of the "is open" rule, document title hook
+frontend/scripts/     og-image.html, the source of public/og-image.png (the share preview card)
 docs/adr/             one decision record per non-obvious choice
 ```
 
