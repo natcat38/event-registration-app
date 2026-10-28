@@ -96,8 +96,9 @@ describe('createEvent', () => {
     mockEvent.findOne.mockResolvedValueOnce(null);
     mockEvent.create.mockResolvedValueOnce({} as never);
 
-    await createEvent(input);
+    const result = await createEvent(input);
 
+    expect(result).toEqual({ address: ADDRESS });
     expect(mockHandler.findByPk).toHaveBeenNthCalledWith(1, HANDLER_UUID, undefined);
     expect(mockHandler.findByPk).toHaveBeenNthCalledWith(2, HANDLER_UUID, {
       lock: fakeT.LOCK.UPDATE,

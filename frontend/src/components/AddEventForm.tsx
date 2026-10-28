@@ -7,7 +7,7 @@ import {
   Stack,
   TextField,
 } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import EventDateFields from './EventDateFields';
 import HandlerSelect from './HandlerSelect';
 import { fieldOrder, type AddEventFormState } from './useAddEventForm';
@@ -30,11 +30,15 @@ export default function AddEventForm({
   submitCount,
   onClose,
 }: Props) {
+  const alertRef = useRef<HTMLDivElement>(null);
+
   // Move focus to the first invalid field only on a failed submit, never on a field edit.
   useEffect(() => {
     if (submitCount === 0) return;
     const firstInvalid = fieldOrder.find((field) => error?.errors?.[field]);
     if (firstInvalid) document.getElementById(`field-${firstInvalid}`)?.focus();
+    // A form-level error (a failed save) sits above the fields; on a phone the user may have scrolled past it.
+    alertRef.current?.scrollIntoView({ block: 'nearest' });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [submitCount]);
 
@@ -45,12 +49,14 @@ export default function AddEventForm({
         e.preventDefault();
         void submit();
       }}
+      // Flex column so only the fields scroll and the title and buttons stay on screen (full-screen on phones).
+      style={{ display: 'flex', flexDirection: 'column', flex: '1 1 auto', minHeight: 0 }}
     >
       <DialogTitle>Add Event</DialogTitle>
       <DialogContent>
         <Stack spacing={2} sx={{ mt: 1 }}>
           {error && (otherErrors.length > 0 || Object.keys(error.errors ?? {}).length === 0) && (
-            <Alert severity="error">
+            <Alert severity="error" ref={alertRef}>
               {[error.message, ...otherErrors].filter(Boolean).join(' ')}
             </Alert>
           )}

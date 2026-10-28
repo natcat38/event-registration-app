@@ -164,7 +164,7 @@ describe('POST /api/admin/events', () => {
     expect(stored?.deadline.toISOString()).toBe('2099-01-01T15:59:59.999Z');
   });
 
-  it('stores the mocked address and returns an empty 200 body on success', async () => {
+  it('stores the mocked address and returns it in the 200 body on success', async () => {
     const name = eventName('success');
     createdNames.push(name);
 
@@ -173,7 +173,7 @@ describe('POST /api/admin/events', () => {
       .send(validBody({ name, handlerUuid: HANDLER_CHEN }));
 
     expect(res.status).toBe(200);
-    expect(res.text).toBe('');
+    expect(res.body).toEqual({ address: MOCKED_ADDRESS });
 
     const stored = await Event.findOne({ where: { name } });
     expect(stored?.address).toBe(MOCKED_ADDRESS);

@@ -101,5 +101,11 @@ export function useAdminEvents() {
     error,
     pageCount: Math.max(1, Math.ceil(total / PAGE_SIZE)),
     refresh: () => setRefreshKey((k) => k + 1),
+    /** After an event is added: drop search, filter and page so the newest event (sorted first) is on screen. */
+    showNewest: () => {
+      setSearchInput('');
+      updateParams({ q: null, open: null, page: null });
+      setRefreshKey((k) => k + 1);
+    },
   };
 }

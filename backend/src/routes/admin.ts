@@ -14,8 +14,8 @@ router.get('/events', async (req, res) => {
 });
 
 router.post('/events', async (req, res) => {
-  await createEvent(validate(createEventSchema, req.body));
-  res.status(200).end(); // the spec says the response is nil
+  // The spec says the response is nil; the address is an addition. see docs/adr/0011
+  res.status(200).json(await createEvent(validate(createEventSchema, req.body)));
 });
 
 // The spec defines this as POST with no body.

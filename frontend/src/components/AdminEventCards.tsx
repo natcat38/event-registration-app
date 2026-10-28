@@ -3,10 +3,11 @@ import type { AdminEvent } from '../api/client';
 import { formatDateTime } from '../utils/dates';
 import RegisteredCount from './RegisteredCount';
 import StatusBadge from './StatusBadge';
+import type { TrendTarget } from './TrendDialog';
 
 interface Props {
   events: AdminEvent[];
-  onViewTrend: (event: { uuid: string; name: string }) => void;
+  onViewTrend: (event: TrendTarget) => void;
 }
 
 // Phone layout: the 10-column table would need 3 screens of sideways swipe. Same data, one card per event.
@@ -38,7 +39,9 @@ export default function AdminEventCards({ events, onViewTrend }: Props) {
               />
               <Button
                 sx={{ minHeight: 44 }}
-                onClick={() => onViewTrend({ uuid: event.uuid, name: event.name })}
+                onClick={() =>
+                  onViewTrend({ uuid: event.uuid, name: event.name, capacity: event.capacity })
+                }
               >
                 View Trend
               </Button>

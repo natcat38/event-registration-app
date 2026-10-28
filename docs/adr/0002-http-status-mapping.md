@@ -1,13 +1,13 @@
 # 0002. HTTP status mapping
 
 Date: 2026-09-22
-Status: Accepted
+Status: Accepted. The empty-body rule for `POST /api/admin/events` is superseded by [ADR 0011](0011-create-event-returns-address.md).
 
 ## Context
 The spec defines four status codes (200, 421, 400, 500) but does not say which failure goes in 421 versus 400. Every route needs one consistent rule, decided once, not per endpoint.
 
 ## Decision
-- 200: success. `POST /api/admin/events` answers 200 with an empty body, because the spec says its response is nil.
+- 200: success. `POST /api/admin/events` answered 200 with an empty body, because the spec says its response is nil (superseded by ADR 0011: it now returns `{ address }`).
 - 421: the request itself fails validation before anything is looked up: bad shape or format, unparsable JSON, a body over the size limit, a malformed uuid or path segment, out-of-range values, a deadline after the event date. Everything the zod schema rejects.
 - 400: a request that passes validation but fails against stored or external data: unknown event (register or trend), unknown handler, duplicate event name, postal code not found in OneMap, handler already has an open event, event closed, event full, email already registered for this event.
 - 500: anything unexpected, including any OneMap failure.

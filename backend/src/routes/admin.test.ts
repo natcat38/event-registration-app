@@ -27,13 +27,13 @@ beforeEach(() => {
 });
 
 describe('POST /api/admin/events', () => {
-  it('returns 200 with an empty body on success', async () => {
-    mockCreateEvent.mockResolvedValue(undefined);
+  it('returns 200 with the address OneMap resolved on success', async () => {
+    mockCreateEvent.mockResolvedValue({ address: '10 BAYFRONT AVENUE SINGAPORE 018956' });
 
     const res = await request(app).post('/api/admin/events').send(VALID_BODY);
 
     expect(res.status).toBe(200);
-    expect(res.text).toBe('');
+    expect(res.body).toEqual({ address: '10 BAYFRONT AVENUE SINGAPORE 018956' });
   });
 
   it('returns 421 with errors.<field> for each malformed base field', async () => {

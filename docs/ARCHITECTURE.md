@@ -59,7 +59,7 @@ Response: `{ total, events: Event[] }`, page size 10, ordered `createdAt DESC, u
 | `capacity` | integer 1-99999 | 421 `errors.capacity` |
 | `handlerUuid` | must exist and have no open event | malformed 421; unknown or busy 400 `errors.handlerUuid` |
 
-Success: empty 200 body.
+Success: 200 with `{ address }`, the address OneMap resolved from the postal code. See ADR 0011.
 
 ### `GET /api/admin/handlers`
 

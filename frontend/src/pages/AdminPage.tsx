@@ -11,9 +11,12 @@ import {
 } from '@mui/material';
 import { useState } from 'react';
 import AddEventDialog from '../components/AddEventDialog';
+import AddedToast from '../components/AddedToast';
 import AdminEventsTable from '../components/AdminEventsTable';
 import LoadingStatus from '../components/LoadingStatus';
-import TrendDialog from '../components/TrendDialog';
+import RetryAlert from '../components/RetryAlert';
+import TrendDialog, { type TrendTarget } from '../components/TrendDialog';
+import type { CreatedEvent } from '../components/createdEvent';
 import { useDocumentTitle } from '../utils/useDocumentTitle';
 import { useAdminEvents } from './useAdminEvents';
 
@@ -31,10 +34,17 @@ export default function AdminPage() {
     error,
     pageCount,
     refresh,
+    showNewest,
   } = useAdminEvents();
 
   const [addOpen, setAddOpen] = useState(false);
-  const [trendEvent, setTrendEvent] = useState<{ uuid: string; name: string } | null>(null);
+  const [trendEvent, setTrendEvent] = useState<TrendTarget | null>(null);
+  const [added, setAdded] = useState<CreatedEvent | null>(null);
+
+  function handleCreated(created: CreatedEvent) {
+    showNewest();
+    setAdded(created);
+  }
 
   return (
     <Stack spacing={3}>
@@ -71,7 +81,7 @@ export default function AdminPage() {
 
       {loading && events.length === 0 && <LoadingStatus label="Loading events…" />}
 
-      {!loading && error && <Alert severity="error">{error}</Alert>}
+      {!loading && error && <RetryAlert message={error} onRetry={refresh} />}
 
       {!loading && !error && events.length === 0 && <Alert severity="info">No events match.</Alert>}
 
@@ -88,13 +98,11 @@ export default function AdminPage() {
         </Box>
       )}
 
-      <AddEventDialog open={addOpen} onClose={() => setAddOpen(false)} onCreated={refresh} />
+      <AddEventDialog open={addOpen} onClose={() => setAddOpen(false)} onCreated={handleCreated} />
 
-      <TrendDialog
-        eventUuid={trendEvent?.uuid ?? null}
-        eventName={trendEvent?.name ?? null}
-        onClose={() => setTrendEvent(null)}
-      />
+      <TrendDialog target={trendEvent} onClose={() => setTrendEvent(null)} />
+
+      <AddedToast added={added} />
     </Stack>
   );
 }
