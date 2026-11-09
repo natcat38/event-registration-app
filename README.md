@@ -70,7 +70,7 @@ Frontend, from `frontend/`:
 - `npm run lint`
 - `npm run build`
 
-The frontend uses vitest rather than jest because the specification names jest for the backend only.
+The frontend uses vitest rather than jest because the requirements name jest for the backend only.
 
 ## API
 
@@ -94,9 +94,9 @@ Outside this table: 404 for an unknown route, 503 from `/health`, and 429 only w
 
 Every error body is `{ message: string, errors?: Record<string, string[]>, code?: string }`; `code` appears only on a OneMap failure (ADR 0013). See `docs/ARCHITECTURE.md` and `docs/adr/` for field-level rules.
 
-## Assumptions and rules beyond the specification
+## Assumptions and rules beyond the requirements
 
-- One email address may register once per event; testers running repeated registrations must use a distinct address each time (ADR 0006).
+- One email address may register once per event; anyone scripting repeated registrations must use a distinct address each time (ADR 0006).
 - The registration deadline is a Singapore calendar date: send `YYYY-MM-DD` or an ISO date-time, and only the Singapore date is kept (ADR 0003). It may not fall after the event date (ADR 0006).
 - Capacity must be a whole number from 1 to 99999 (ADR 0006).
 - The event date and the deadline may be at most 100 years ahead (ADR 0006).

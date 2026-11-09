@@ -1,10 +1,10 @@
-# 0006. Validation rules beyond the spec
+# 0006. Validation rules beyond the requirements
 
 Date: 2026-09-22
 Status: Accepted
 
 ## Context
-The spec allows "other validations you see fit" on event creation but is silent on several concrete cases. Each rule below is stricter than the spec. They are kept because a real admin team would want them, and each one trades a small amount of automated-test risk for that. The risk is named per rule under Consequences so the trade is visible.
+The requirements allow "other validations you see fit" on event creation but is silent on several concrete cases. Each rule below is stricter than the requirements. They are kept because a real admin team would want them, and each one trades a small amount of automated-test risk for that. The risk is named per rule under Consequences so the trade is visible.
 
 ## Decision
 - Unique email per event: a second registration with the same email, for the same event, is rejected 400 ("This email address is already registered for this event."), backed by a unique index.
@@ -17,7 +17,7 @@ The spec allows "other validations you see fit" on event creation but is silent 
 - Query leniency goes the other way: `open` accepts `true` or `1` case-insensitively and treats anything else as absent, `page` defaults to 1, and neither ever returns 421 for a value that merely means "no filter".
 
 ## Consequences
-- Unique email per event: an automated script that fills a capacity-5 event by repeating one address stops at the second call with 400, not five. The README must tell testers to use distinct addresses per registration.
+- Unique email per event: an automated script that fills a capacity-5 event by repeating one address stops at the second call with 400, not five. The README tells anyone scripting registrations to use distinct addresses.
 - Deadline-before-event-date: a script that sets a generous, valid-looking deadline without checking it against the event date can get an unexpected 421. The README states the rule plainly.
 - Capacity ceiling: a script that sets `capacity: 1000000` to build a "never fills" fixture gets 421, not a stored event. The README states the ceiling.
 - 100-year date ceiling: the common "never closes" test fixture of `9999-12-31` is rejected with 421 instead of accepted as an always-open event. The README names the ceiling.

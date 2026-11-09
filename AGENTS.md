@@ -61,5 +61,4 @@ Database: `docker compose up -d --wait` from the repo root. Copy `.env.example` 
 - Comments are one line and point at an ADR when the reason is not obvious: `// see docs/adr/0004`.
 - No source file over about 120 lines; test files may run to about 200. Split anything larger.
 - Logging: one line per request (method, path, status, duration) plus errors. Never log an email address, the OneMap password, or a bearer token.
-- Never name the client company that issued the brief, in any file, filename, commit message or repo description. Write "the client".
 - Commits: one logical change each, message names the slice or the fix.

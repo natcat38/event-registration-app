@@ -15,7 +15,7 @@ export class AppError extends Error {
 }
 
 /**
- * OneMap could not answer (network, timeout, 5xx, 429, malformed body). Still a 500, since the spec allows
+ * OneMap could not answer (network, timeout, 5xx, 429, malformed body). Still a 500, since the API contract allows
  * only four codes, but the body carries `code` so the UI can name the cause. see docs/adr/0013
  */
 export class AddressLookupError extends Error {

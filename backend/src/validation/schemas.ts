@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { parseDeadline, parseInstant, sgtDate } from '../utils/dates';
 
-// see docs/adr/0006 for every rule here that goes beyond the spec.
+// see docs/adr/0006 for every rule here that goes beyond the requirements.
 const uuid = z.string().uuid().toLowerCase();
 
 export const uuidParamSchema = z.object({ uuid });

@@ -17,7 +17,7 @@ The event company operates in Singapore time, but MySQL and Sequelize work natur
 - The registration trend groups rows by `DATE(CONVERT_TZ(createdAt, '+00:00', '+08:00'))` and runs from the Singapore date of `createdAt` to the Singapore date of `deadline`, inclusive. Numeric offsets only: named zones return NULL without MySQL's timezone tables.
 
 ## Consequences
-- Easier: one place per package defines "open," pinned by shared fixtures, so the badge and the backend check agree.
+- Easier: one place per package defines "open," and each package tests the same boundary cases separately, so the badge and the backend check agree. No fixture file is shared, so a change to one copy must be mirrored in the other by hand.
 - Easier: storing UTC keeps every column and index behaviour independent of the server's local timezone setting.
 - Harder: every date-only field needs its own conversion rule; a bug in the offset is not naturally visible in the raw stored value, only when rendered as a Singapore date.
-- Risk: capturing `now` after the lock, rather than at request arrival, means two requests arriving one millisecond apart can see different `now` values under load; this is intentional and closes a real race, not a spec requirement.
+- Risk: capturing `now` after the lock, rather than at request arrival, means two requests arriving one millisecond apart can see different `now` values under load; this is intentional and closes a real race, not a stated requirement.

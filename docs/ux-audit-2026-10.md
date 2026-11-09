@@ -67,7 +67,7 @@ Sev: P0 blocks or confuses the main task; P1 clunky and noticeable; P2 polish. N
 
 ## Decisions for Natalie
 
-**D1. Identity (blocks EVT-UX-18 name, logo, description, OG).** Protects: a recruiter opening the demo sees a product, not a template. Enables: tab, share and bookmark recognition. The brief forbids naming the client company, so any name is a neutral fictional one.
+**D1. Identity (blocks EVT-UX-18 name, logo, description, OG).** Protects: a recruiter opening the demo sees a product, not a template. Enables: tab, share and bookmark recognition. The requirements give the product no name, so any name is a neutral fictional one.
 - A. Keep "Event Registration" and the blue square favicon; add only `theme-color`, a description and a self-hosted font. Cheapest; stays visibly generic.
 - B. You pick a short fictional product name; agent adds a wordmark in the app bar, an SVG favicon and an OG image, and loads Roboto via `@fontsource`. Looks finished; one new small dependency.
 - C. Present it as a portfolio piece (a one-line "built by Natalie" credit) with a link to the repo in the footer. Honest and recruiter-oriented; the page now carries a claim about authorship.
@@ -127,7 +127,7 @@ The two dev servers and the scratch Compose project (`evt-ux-audit`, volume remo
 
 | Item | Evidence | Decision |
 |---|---|---|
-| EVT-UX-6 error wording | The Add Event message said "The postal code check may be unavailable" on every 500, but `errorHandler.ts` returns 500 for any unexpected failure, so a database outage also blamed the postal check | Option 3: the backend names the cause. A OneMap failure is still a 500 (the spec allows four codes) with `code: "address_lookup_failed"` in the body. The UI names the postal check only for that code; any other 500 reads "We couldn't save the event just now. Your details are kept; try again in a minute." ADR 0013. |
+| EVT-UX-6 error wording | The Add Event message said "The postal code check may be unavailable" on every 500, but `errorHandler.ts` returns 500 for any unexpected failure, so a database outage also blamed the postal check | Option 3: the backend names the cause. A OneMap failure is still a 500 (the API contract allows four codes) with `code: "address_lookup_failed"` in the body. The UI names the postal check only for that code; any other 500 reads "We couldn't save the event just now. Your details are kept; try again in a minute." ADR 0013. |
 | Relative `og:image` | `index.html` had `content="/og-image.png"`; LinkedIn, Facebook and Slack ignore relative OG image URLs. No deployed URL exists yet | Option 2: `vite.config.ts` prefixes `VITE_SITE_URL` at build time. Unset, the path stays relative (verified: `/og-image.png`); set to `https://events.example.test/`, the built page carries `https://events.example.test/og-image.png`. ADR 0013. |
 
 ## From the 2026-11-02 open-items sweep
