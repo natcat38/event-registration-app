@@ -5,7 +5,7 @@ Status: Accepted. Owner decisions from the 2026-10 UX polish pass. The address-i
 
 ## Context
 A UX audit on 2026-10-23 found four questions that were product calls, not fixes:
-- The app had no visible name on its pages and no share metadata. The brief does not name the client company, so any new name would be invented.
+- The app had no visible name on its pages and no share metadata. The requirements give the product no name, so any name would be invented.
 - The admin events table needed a sideways scroll on a phone to reach the Registered count and the Trend button.
 - The registration trend was a plain table of dates and counts.
 - The public nav shows an Admin link, while [ADR 0009](0009-security-scope.md) leaves authentication out of scope.

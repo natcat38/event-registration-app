@@ -15,7 +15,7 @@ export interface PublicEventDto {
 
 export const PUBLIC_EVENT_ATTRIBUTES = ['uuid', 'name', 'dateTime', 'address', 'deadline'] as const;
 
-/** The five spec fields, shared by the public list and the admin list. see docs/adr/0003 for formats */
+/** The five required fields, shared by the public list and the admin list. see docs/adr/0003 for formats */
 export function toPublicEventDto(event: Event): PublicEventDto {
   return {
     uuid: event.uuid,

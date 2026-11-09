@@ -7,7 +7,7 @@ type FormFields = {
   handlerUuid: string;
 };
 
-// Order matches the spec's field order; also drives which field gets focus first.
+// Order matches the required field order; also drives which field gets focus first.
 export const fieldOrder = [
   'name',
   'dateTime',

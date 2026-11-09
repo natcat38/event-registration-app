@@ -24,7 +24,7 @@ uuid columns are `CHAR(36) ascii_bin`. Text columns used in uniqueness or search
 
 ## The open rule
 
-`open = now <= deadline AND registrationCount < capacity`. One definition lives in the backend's `utils/dates.ts`, exporting both a TypeScript check and a Sequelize `where` fragment; the frontend keeps a deliberate copy for the status badge. Both packages run the same fixtures so the two cannot drift silently. See ADR 0003.
+`open = now <= deadline AND registrationCount < capacity`. One definition lives in the backend's `utils/dates.ts`, exporting both a TypeScript check and a Sequelize `where` fragment; the frontend keeps a deliberate copy for the status badge. Each package tests the same boundary cases in its own `dates.test.ts`; no fixture file is shared, so a change to one copy must be mirrored in the other by hand. See ADR 0003.
 
 **Worked example.** Admin creates "Tech Summit" with `dateTime: "2026-04-25T18:00:00+08:00"`, `deadline: "2026-04-20"`, `capacity: 2`, on 2026-04-15.
 
@@ -98,7 +98,7 @@ All timestamps are stored in UTC; Sequelize's timezone is fixed at `+00:00`. `de
 
 ## Known limits and production additions
 
-- No authentication on any route. The specification does not require it for this scope.
+- No authentication on any route. The requirements do not call for it at this scope.
 - No idempotency keys on write endpoints; a retried POST can create a duplicate attempt at the application layer, though the unique indexes still prevent duplicate data.
 - No graceful shutdown handling.
 - An OneMap outage turns every event creation into a 500; there is no fallback address source. See ADR 0005.

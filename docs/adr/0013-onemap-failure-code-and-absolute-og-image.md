@@ -8,7 +8,7 @@ Status: Accepted. Refines the 500 row of [ADR 0002](0002-http-status-mapping.md)
 - **Share image.** `frontend/index.html` set `og:image` to `/og-image.png`. The Open Graph protocol requires a full URL, and LinkedIn, Facebook and Slack ignore a relative one. The app has no deployed URL yet.
 
 ## Decision
-- A OneMap failure (network error, timeout, non-200, 429, malformed body, token failure) is wrapped in `AddressLookupError` in `createEvent`. The error handler answers it with **status 500** and the body `{ "message": "Address lookup failed.", "code": "address_lookup_failed" }`. It stays a 500 because the spec allows only 200, 421, 400 and 500 (ADR 0002); a 502 was considered and rejected for that reason.
+- A OneMap failure (network error, timeout, non-200, 429, malformed body, token failure) is wrapped in `AddressLookupError` in `createEvent`. The error handler answers it with **status 500** and the body `{ "message": "Address lookup failed.", "code": "address_lookup_failed" }`. It stays a 500 because the API contract allows only 200, 421, 400 and 500 (ADR 0002); a 502 was considered and rejected for that reason.
 - The error body becomes `{ message: string, errors?: Record<string, string[]>, code?: string }`. `code` appears only where the cause is known; every other 500 is unchanged.
 - The UI keeps a 500's `code` (`toApiError`) and shows:
   - with `address_lookup_failed`: "We couldn't save the event because the postal code check is unavailable right now. Your details are kept; try again in a minute."

@@ -4,7 +4,7 @@ Date: 2026-09-22
 Status: Accepted
 
 ## Context
-Event addresses come from a postal code lookup against OneMap. The spec links OneMap's token documentation directly, and a live check found that skipping the token changes what a "not found" response looks like.
+Event addresses come from a postal code lookup against OneMap. The requirements link OneMap's token documentation directly, and a live check found that skipping the token changes what a "not found" response looks like.
 
 ## Decision
 - Keep the token flow: fetch a bearer token, cache it with its expiry, and refresh it 5 minutes before expiry.
@@ -17,5 +17,5 @@ Event addresses come from a postal code lookup against OneMap. The spec links On
 ## Consequences
 - Easier: one clear rule ("token required, exact postal match, any failure is 500") replaces a set of special cases for OneMap's quirks.
 - Harder: the token cache and its expiry buffer are code that would not exist if OneMap allowed anonymous, unambiguous lookups; kept anyway because the ambiguity above is real and verified live, not theoretical.
-- Consequence: OneMap credentials are a hard prerequisite. Startup fails with a named error when they are blank, and the README makes registering a free OneMap account step one, so a reviewer never sees a 500 on every create.
+- Consequence: OneMap credentials are a hard prerequisite. Startup fails with a named error when they are blank, and the README makes registering a free OneMap account step one, so nobody running it sees a 500 on every create.
 - Risk: OneMap being slow or down turns every event creation into a 500, since there is no fallback address source; acceptable for a proof of concept, called out as a production gap.
