@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { createEvent, listHandlers, toApiError, type ApiError, type Handler } from '../api/client';
 import { fieldOrder, validate } from './addEventValidation';
-import { SAVE_FAILED_MESSAGE, type CreatedEvent } from './createdEvent';
+import {
+  ADDRESS_LOOKUP_FAILED_MESSAGE,
+  SAVE_FAILED_MESSAGE,
+  type CreatedEvent,
+} from './createdEvent';
 
 const emptyForm = {
   name: '',
@@ -101,7 +105,13 @@ export function useAddEventForm(onClose: () => void, onCreated: (created: Create
       const apiError = toApiError(err);
       setError(
         apiError.status !== undefined && apiError.status >= 500
-          ? { ...apiError, message: SAVE_FAILED_MESSAGE }
+          ? {
+              ...apiError,
+              message:
+                apiError.code === 'address_lookup_failed'
+                  ? ADDRESS_LOOKUP_FAILED_MESSAGE
+                  : SAVE_FAILED_MESSAGE,
+            }
           : apiError,
       );
       setSubmitCount((n) => n + 1);

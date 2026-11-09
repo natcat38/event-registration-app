@@ -54,6 +54,18 @@ describe('toApiError', () => {
     });
   });
 
+  it('keeps the machine-readable code from a 500 body', () => {
+    const err = axiosErrorWithBody(
+      { message: 'Address lookup failed.', code: 'address_lookup_failed' },
+      500,
+    );
+    expect(toApiError(err)).toEqual({
+      message: 'The server ran into a problem. Please try again in a minute.',
+      status: 500,
+      code: 'address_lookup_failed',
+    });
+  });
+
   it('maps a non-axios error to the generic message', () => {
     expect(toApiError(new Error('boom'))).toEqual({
       message: 'Something went wrong. Please try again.',

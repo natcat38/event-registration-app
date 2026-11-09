@@ -1,7 +1,7 @@
 import { UniqueConstraintError, type FindOptions } from 'sequelize';
 import { Event, Handler, sequelize, withDeadlockRetry } from '../models';
 import { openWhere, sgtDate } from '../utils/dates';
-import { AppError } from '../utils/errors';
+import { AddressLookupError, AppError } from '../utils/errors';
 import type { CreateEventInput } from '../validation/schemas';
 import { lookupAddress } from './onemap';
 
@@ -54,7 +54,12 @@ async function findHandlerOrThrow(uuid: string, options?: FindOptions<Handler>):
 export async function createEvent(input: CreateEventInput): Promise<{ address: string }> {
   // Cheap check first so an unknown handler never costs a OneMap call; the locked check is authoritative.
   await findHandlerOrThrow(input.handlerUuid);
-  const address = await lookupAddress(input.postalCode);
+  let address: string | null;
+  try {
+    address = await lookupAddress(input.postalCode);
+  } catch (err) {
+    throw new AddressLookupError(err); // see docs/adr/0013
+  }
   if (!address) throw AppError.field(400, 'postalCode', 'Postal code not found.');
 
   await withDeadlockRetry(() =>

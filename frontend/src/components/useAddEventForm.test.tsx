@@ -145,6 +145,34 @@ describe('useAddEventForm', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
+  it('names the postal check only when the backend says OneMap failed', async () => {
+    mockedCreateEvent.mockRejectedValue({
+      message: 'The server ran into a problem.',
+      status: 500,
+      code: 'address_lookup_failed',
+    });
+    const { result } = renderHook(() => useAddEventForm(vi.fn(), vi.fn()));
+    fillValidForm(result);
+
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    expect(result.current.error?.message).toMatch(/postal code check is unavailable/i);
+  });
+
+  it('does not blame the postal check for a 500 without that code', async () => {
+    mockedCreateEvent.mockRejectedValue({ message: 'The server ran into a problem.', status: 500 });
+    const { result } = renderHook(() => useAddEventForm(vi.fn(), vi.fn()));
+    fillValidForm(result);
+
+    await act(async () => {
+      await result.current.submit();
+    });
+
+    expect(result.current.error?.message).not.toMatch(/postal/i);
+  });
+
   it('keeps a 400 message as the server wrote it', async () => {
     mockedCreateEvent.mockRejectedValue({ message: 'Postal code not found.', status: 400 });
     const { result } = renderHook(() => useAddEventForm(vi.fn(), vi.fn()));
