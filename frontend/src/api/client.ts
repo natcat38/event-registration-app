@@ -11,6 +11,8 @@ export interface ApiError {
   errors?: Record<string, string[]>;
   /** HTTP status when the server answered; absent for timeouts and unreachable servers. */
   status?: number;
+  /** Machine-readable cause on some 500s, e.g. 'address_lookup_failed'. see docs/adr/0013 */
+  code?: string;
 }
 
 export const UNREACHABLE_MESSAGE = "Can't reach the server. Check your connection and retry.";
@@ -25,10 +27,15 @@ export function toApiError(err: unknown): ApiError {
     // No response at all: the server is down, the network dropped, or CORS blocked the call.
     if (!err.response) return { message: UNREACHABLE_MESSAGE };
     const status = err.response.status;
-    // The backend answers every unexpected failure with a bare "Internal server error"; say something a person can act on.
-    if (status >= 500) return { message: SERVER_ERROR_MESSAGE, status };
     const data = err.response.data as
-      { message?: string; errors?: Record<string, string[]> } | undefined;
+      { message?: string; errors?: Record<string, string[]>; code?: unknown } | undefined;
+    // The backend's 500 message is not written for people; keep only its machine-readable code. see docs/adr/0013
+    if (status >= 500) {
+      const code = typeof data?.code === 'string' ? data.code : undefined;
+      return code
+        ? { message: SERVER_ERROR_MESSAGE, status, code }
+        : { message: SERVER_ERROR_MESSAGE, status };
+    }
     if (data && typeof data.message === 'string') {
       return { message: data.message, errors: data.errors, status };
     }

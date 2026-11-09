@@ -1,10 +1,16 @@
 import type { NextFunction, Request, Response } from 'express';
-import { AppError } from '../utils/errors';
+import { AddressLookupError, AppError } from '../utils/errors';
 import { logger } from '../utils/logger';
 
 export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction) {
   if (err instanceof AppError) {
     res.status(err.status).json({ message: err.message, errors: err.errors });
+    return;
+  }
+  // see docs/adr/0013: same 500, plus a code naming the cause. onemap.ts already logged the details.
+  if (err instanceof AddressLookupError) {
+    logger.error('Address lookup failed');
+    res.status(500).json({ message: err.message, code: err.code });
     return;
   }
   // Body parser, zlib and the Express router all tag request-caused failures with a 4xx status.

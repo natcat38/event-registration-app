@@ -53,7 +53,7 @@ npm install
 npm run dev
 ```
 
-Listens on port 8001 (use `localhost`, not `127.0.0.1`). Open http://localhost:8001 for the public page and http://localhost:8001/admin for the admin page. The UI calls the API at http://localhost:8000; set `VITE_API_URL` in `frontend/.env` to point elsewhere.
+Listens on port 8001 (use `localhost`, not `127.0.0.1`). Open http://localhost:8001 for the public page and http://localhost:8001/admin for the admin page. The UI calls the API at http://localhost:8000; set `VITE_API_URL` in `frontend/.env` to point elsewhere. When the frontend is hosted, build it with `VITE_SITE_URL` set to its public address (for example `https://events.example.com`) so the link-preview image URL is absolute (ADR 0013).
 
 Add your first event from the admin page; the tables start empty.
 
@@ -88,11 +88,11 @@ The frontend uses vitest rather than jest because the specification names jest f
 | 200 | Success. |
 | 421 | The request fails validation before anything is looked up: shape, format, ranges, a deadline after the event date (ADR 0002). |
 | 400 | The request is valid but fails against stored or external data: unknown ids, duplicate name, postal code not found, handler busy, event closed or full, email already registered (ADR 0002). |
-| 500 | Anything unexpected, including any OneMap failure. |
+| 500 | Anything unexpected, including any OneMap failure. A OneMap failure adds `code: "address_lookup_failed"` to the body (ADR 0013). |
 
 Outside this table: 404 for an unknown route, 503 from `/health`, and 429 only when the rate limiter is enabled.
 
-Every error body is `{ message: string, errors?: Record<string, string[]> }`. See `docs/ARCHITECTURE.md` and `docs/adr/` for field-level rules.
+Every error body is `{ message: string, errors?: Record<string, string[]>, code?: string }`; `code` appears only on a OneMap failure (ADR 0013). See `docs/ARCHITECTURE.md` and `docs/adr/` for field-level rules.
 
 ## Assumptions and rules beyond the specification
 

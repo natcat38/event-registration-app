@@ -4,6 +4,8 @@ export interface CreatedEvent {
   address: string;
 }
 
-// A 500 here almost always means the OneMap postal lookup failed (the backend maps every OneMap failure to 500).
+// see docs/adr/0013: the postal check is named only when the backend says OneMap failed (code address_lookup_failed).
+export const ADDRESS_LOOKUP_FAILED_MESSAGE =
+  "We couldn't save the event because the postal code check is unavailable right now. Your details are kept; try again in a minute.";
 export const SAVE_FAILED_MESSAGE =
-  "We couldn't save the event just now. The postal code check may be unavailable. Your details are kept; try again in a minute.";
+  "We couldn't save the event just now. Your details are kept; try again in a minute.";

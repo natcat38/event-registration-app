@@ -57,6 +57,14 @@ describe('createEvent', () => {
     });
   });
 
+  it('wraps a OneMap failure in AddressLookupError and never writes the event', async () => {
+    mockHandler.findByPk.mockResolvedValue(handlerRow as never);
+    mockLookupAddress.mockRejectedValueOnce(new Error('OneMap search returned status 503'));
+
+    await expect(createEvent(input)).rejects.toMatchObject({ code: 'address_lookup_failed' });
+    expect(mockEvent.create).not.toHaveBeenCalled();
+  });
+
   it('returns 400 on handlerUuid when the handler already has an open event', async () => {
     mockHandler.findByPk.mockResolvedValue(handlerRow as never);
     mockLookupAddress.mockResolvedValueOnce(ADDRESS);

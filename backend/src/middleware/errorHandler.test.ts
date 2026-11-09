@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import { AppError } from '../utils/errors';
+import { AddressLookupError, AppError } from '../utils/errors';
 import { errorHandler } from './errorHandler';
 
 function mockRes() {
@@ -22,6 +22,16 @@ describe('errorHandler', () => {
     const res = mockRes();
     errorHandler(Object.assign(new URIError('bad %'), { status: 400 }), req, res, next);
     expect(res.status).toHaveBeenCalledWith(421);
+  });
+
+  it('returns 500 with code address_lookup_failed and no internals for a OneMap failure', () => {
+    const res = mockRes();
+    errorHandler(new AddressLookupError(new Error('secret token')), req, res, next);
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: 'Address lookup failed.',
+      code: 'address_lookup_failed',
+    });
   });
 
   it('returns a generic 500 with no internals for anything else', () => {
